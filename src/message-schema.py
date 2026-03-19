@@ -1,4 +1,3 @@
-# core/message_schema.py
 import uuid
 from dataclasses import dataclass, asdict
 from datetime import datetime
