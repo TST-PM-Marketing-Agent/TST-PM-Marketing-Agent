@@ -1,7 +1,7 @@
 import logging
-from core.message_bus import get_messages_for, send_message
-from core.message_schema import Message
-from tools.marketing_tools import plan_campaign, save_campaign
+from message_bus import get_messages_for, send_message
+from message_schema import Message
+from marketing_tools import plan_campaign, save_campaign
 
 class MarketingAgent:
     def __init__(self, name="Marketing"):
