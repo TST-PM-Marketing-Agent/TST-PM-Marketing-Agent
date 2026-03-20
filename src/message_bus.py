@@ -9,7 +9,7 @@ def send_message(msg):
     _message_queue.append(msg)
 
 def get_messages_for(agent_name):
-    """Fetch and remove pending messages intended for agent"""
+    # fetch + remove messages for agent
     results = [m for m in list(_message_queue)
                if m['recipient'] in (agent_name, "broadcast")]
     for m in results:
