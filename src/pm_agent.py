@@ -1,7 +1,7 @@
 import logging
 from message_bus import get_messages_for, send_message
 from message_schema import Message
-from pm_tools import generate_features_llm, mosco<w>w</w>_prioritize, save_backlog
+from pm_tools import generate_features_llm, moscow_prioritize, save_backlog
 
 class PMAgent:
     def __init__(self, name="PM"):
