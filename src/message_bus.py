@@ -3,7 +3,7 @@ from collections import deque
 _message_queue = deque()
 
 def send_message(msg):
-    """Append a Message (or dict) to the queue."""
+    #add message to queue
     if hasattr(msg, 'to_dict'):
         msg = msg.to_dict()
     _message_queue.append(msg)
