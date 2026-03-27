@@ -1,51 +1,74 @@
-import logging
+import json
+import uuid
 import os
-from message_bus import get_messages_for, send_message
-from message_schema import Message
-from marketing_tools import plan_campaign, save_campaign
+from datetime import datetime
 
-class MarketingAgent:
-    def __init__(self, name="Marketing"):
-        self.name = name
-        os.makedirs("logs", exist_ok=True)
-        logging.basicConfig(filename="logs/app.log", level=logging.INFO)
+def generate_features_llm(goal):
+    try:
+        from ollama import chat
+        res = chat(model='mistral', messages=[{
+            'role': 'user',
+            'content': (
+                f"List 6 product features to achieve this goal: {goal}. "
+                "Respond ONLY with a JSON array. Each item must have 'name' (string) "
+                "and 'impact' (one of: high, medium, low). "
+                "Example: [{\"name\": \"Feature A\", \"impact\": \"high\"}]"
+            )
+        }])
+        text = res.message.content.strip()
+        text = text[text.index("["):text.rindex("]") + 1]
+        features = json.loads(text)
+    except Exception:
+        features = [
+            {"name": "AI-Powered Analytics Dashboard", "impact": "high"},
+            {"name": "Multi-Tenant SSO Integration", "impact": "high"},
+            {"name": "Automated Onboarding Flow", "impact": "high"},
+            {"name": "Usage-Based Billing Module", "impact": "medium"},
+            {"name": "In-App Help Center", "impact": "medium"},
+            {"name": "Dark Mode UI", "impact": "low"},
+        ]
+    return features
 
-    def run(self):
-        msgs = get_messages_for(self.name)
-        for m in msgs:
-            if m['task_type'] == "LAUNCH_CAMPAIGN":
-                self.handle_launch_campaign(m)
-            elif m['task_type'] == "BUDGET_APPROVED":
-                self.handle_budget_approved(m)
-            else:
-                logging.warning(f"MarketingAgent: Unhandled {m['task_type']}")
+def moscow_prioritize(features):
+    must = [f for f in features if f.get("impact") == "high"]
+    should = [f for f in features if f.get("impact") == "medium"]
+    could = [f for f in features if f.get("impact") == "low"]
+    wont = [f for f in features if f.get("impact") not in ("high", "medium", "low")]
+    return {"must": must, "should": should, "could": could, "wont": wont}
 
-    def handle_launch_campaign(self, msg):
-        logging.info(f"MarketingAgent received campaign request: {msg['id']}")
-        payload = msg['payload']
-        product = payload.get("product_name", "Product")
-        features = payload.get("features", [])
-        project_id = msg.get("context", {}).get("project_id")
+def save_backlog(data):
+    os.makedirs("data", exist_ok=True)
+    with open("data/backlog.json", "w") as f:
+        json.dump(data, f, indent=2)
 
-        campaign = plan_campaign(product, features)
-        campaign["project_id"] = project_id
-        logging.info(f"MarketingAgent plan: {campaign}")
+def create_project(name, goal, payload):
+    os.makedirs("data", exist_ok=True)
+    projects = []
+    if os.path.exists("data/projects.json"):
+        with open("data/projects.json", "r") as f:
+            projects = json.load(f)
+    project = {
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "goal": goal,
+        "payload": payload,
+        "created_at": datetime.utcnow().isoformat() + "Z",
+        "status": "active",
+        "requests": []
+    }
+    projects.append(project)
+    with open("data/projects.json", "w") as f:
+        json.dump(projects, f, indent=2)
+    return project
 
-        if campaign.get("budget", 0) > 10000:
-            logging.info("Budget > $10k, escalating to CEO")
-            send_message(Message.create(
-                sender=self.name,
-                recipient="CEO",
-                task_type="BUDGET_APPROVAL",
-                context={"project_id": project_id},
-                payload=campaign
-            ))
-        else:
-            save_campaign(campaign)
-            logging.info("MarketingAgent: campaign saved")
-
-    def handle_budget_approved(self, msg):
-        logging.info(f"MarketingAgent: budget approved for message {msg['id']}")
-        campaign = msg['payload']
-        save_campaign(campaign)
-        logging.info("MarketingAgent: approved campaign saved")
+def add_request_to_project(project_id, request):
+    if not os.path.exists("data/projects.json"):
+        return
+    with open("data/projects.json", "r") as f:
+        projects = json.load(f)
+    for p in projects:
+        if p["id"] == project_id:
+            p["requests"].append(request)
+            break
+    with open("data/projects.json", "w") as f:
+        json.dump(projects, f, indent=2)
