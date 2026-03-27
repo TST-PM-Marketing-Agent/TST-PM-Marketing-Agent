@@ -14,12 +14,12 @@ class Message:
     payload: Dict
     status: str
     error: str = ""
-    
+
     @staticmethod
     def create(sender: str, recipient: str, task_type: str, context=None, payload=None):
         return Message(
             id=str(uuid.uuid4()),
-            timestamp=datetime.utcnow().isoformat()+"Z",
+            timestamp=datetime.utcnow().isoformat() + "Z",
             sender=sender,
             recipient=recipient,
             task_type=task_type,
@@ -27,6 +27,6 @@ class Message:
             payload=payload or {},
             status="pending"
         )
-    
+
     def to_dict(self):
         return asdict(self)
