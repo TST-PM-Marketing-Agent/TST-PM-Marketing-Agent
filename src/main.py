@@ -2,7 +2,6 @@ from message_schema import Message
 from message_bus import send_message
 from orchestrator import run_cycle
 
-# ceo gives role to pm
 msg = Message.create(
     sender="CEO",
     recipient="PM",
@@ -16,7 +15,6 @@ msg = Message.create(
 )
 send_message(msg)
 
-# run loop for 2 cycles, pm -> marketing -> maybe ceo?
 run_cycle()
 run_cycle()
 
