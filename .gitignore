@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+
+logs/
+data/*.db
+
+# Runtime output artifacts
+data/messages.json
+data/backlog.json
+data/projects.json
+data/campaigns.json
+data/ceo_reports.json

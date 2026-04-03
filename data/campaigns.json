@@ -46,5 +46,21 @@
     "expected_leads": 150,
     "timeline_weeks": 6,
     "project_id": "feeadcd2-4398-4feb-a134-014fe5853a2c"
+  },
+  {
+    "product": "AI-Enterprise-Suite",
+    "features": [
+      "AI-Powered Analytics Dashboard",
+      "Multi-Tenant SSO Integration",
+      "Automated Onboarding Flow",
+      "Usage-Based Billing Module",
+      "In-App Help Center"
+    ],
+    "tagline": "Unlock the power of AI-Enterprise-Suite",
+    "channel": "Email + Social Media",
+    "budget": 8000,
+    "expected_leads": 150,
+    "timeline_weeks": 6,
+    "project_id": "1cdd5877-18da-4813-a1c0-38c786823d0f"
   }
 ]

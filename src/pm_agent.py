@@ -3,6 +3,7 @@ import os
 from message_bus import get_messages_for, send_message
 from message_schema import Message
 from pm_tools import generate_features_llm, moscow_prioritize, save_backlog, create_project, add_request_to_project
+from storage import storage
 
 class PMAgent:
     def __init__(self, name="PM"):
@@ -39,6 +40,18 @@ class PMAgent:
         logging.info(f"PMAgent backlog: {prioritized}")
 
         save_backlog(prioritized)
+        storage.save_backlog(project["id"], prioritized)
+        storage.add_project_event(
+            source=self.name,
+            event_type="roadmap_defined",
+            project_id=project["id"],
+            message_id=msg["id"],
+            details={
+                "product_name": product,
+                "must_count": len(prioritized["must"]),
+                "should_count": len(prioritized["should"]),
+            },
+        )
 
         add_request_to_project(project["id"], {
             "type": "roadmap",
@@ -80,14 +93,29 @@ class PMAgent:
         prioritized = moscow_prioritize(features)
 
         project_id = None
-        if self._active_project:
+        context_project_id = msg.get("context", {}).get("project_id")
+        if context_project_id:
+            project_id = context_project_id
+        elif self._active_project:
             project_id = self._active_project["id"]
+        if project_id:
             add_request_to_project(project_id, {
                 "type": "feature_request",
                 "requester": requester,
                 "message_id": msg["id"],
                 "features": features
             })
+        if project_id and not self._active_project:
+            project = storage.get_project(project_id)
+            if project:
+                self._active_project = project
+        storage.add_project_event(
+            source=self.name,
+            event_type="feature_response_prepared",
+            project_id=project_id,
+            message_id=msg["id"],
+            details={"requester": requester, "goal": goal},
+        )
 
         send_message(Message.create(
             sender=self.name,

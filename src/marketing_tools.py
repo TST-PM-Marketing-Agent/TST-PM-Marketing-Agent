@@ -1,26 +1,22 @@
 import json
 import os
+from llm_provider import llm_json_object
+from storage import storage
 
 def plan_campaign(product, features):
-    try:
-        from ollama import chat
-        feature_names = [f["name"] if isinstance(f, dict) else f for f in features]
-        res = chat(model='mistral', messages=[{
-            'role': 'user',
-            'content': (
-                f"Plan a marketing campaign for {product} with features: {feature_names}. "
-                "Respond ONLY with a JSON object with these keys: "
-                "'product' (string), 'tagline' (string), 'channel' (string), "
-                "'budget' (integer USD), 'expected_leads' (integer), 'timeline_weeks' (integer). "
-                "No explanation, just the JSON object."
-            )
-        }])
-        text = res.message.content.strip()
-        text = text[text.index("{"):text.rindex("}") + 1]
-        campaign = json.loads(text)
+    feature_names = [f["name"] if isinstance(f, dict) else f for f in features]
+    prompt = (
+        f"Plan a marketing campaign for {product} with features: {feature_names}. "
+        "Respond ONLY with a JSON object with these keys: "
+        "'product' (string), 'tagline' (string), 'channel' (string), "
+        "'budget' (integer USD), 'expected_leads' (integer), 'timeline_weeks' (integer). "
+        "No explanation, just the JSON object."
+    )
+    campaign = llm_json_object(prompt)
+    if campaign:
         campaign["product"] = campaign.get("product", product)
         campaign["features"] = feature_names
-    except Exception:
+    else:
         feature_names = [f["name"] if isinstance(f, dict) else f for f in features]
         campaign = {
             "product": product,
@@ -42,3 +38,4 @@ def save_campaign(campaign):
     existing.append(campaign)
     with open("data/campaigns.json", "w") as f:
         json.dump(existing, f, indent=2)
+    storage.save_campaign(campaign)
