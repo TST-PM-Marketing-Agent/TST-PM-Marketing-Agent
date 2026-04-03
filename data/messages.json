@@ -232,5 +232,81 @@
     },
     "status": "pending",
     "error": ""
+  },
+  {
+    "id": "7832eae5-3d6e-4154-a385-0d8dc5658f28",
+    "timestamp": "2026-04-03T01:57:15.244424+00:00",
+    "sender": "User",
+    "recipient": "PM",
+    "task_type": "DEFINE_Q2_ROADMAP",
+    "context": {
+      "quarter": "Q2",
+      "year": 2026
+    },
+    "payload": {
+      "business_goal": "Increase SaaS revenue by 15%",
+      "constraints": [
+        "Focus on SMB customers",
+        "3-engineer capacity"
+      ],
+      "product_name": "AI-Enterprise-Suite"
+    },
+    "status": "pending",
+    "error": ""
+  },
+  {
+    "id": "c632e3d8-3bf8-43ce-8442-83f71bc36ce5",
+    "timestamp": "2026-04-03T01:57:15.245815+00:00",
+    "sender": "PM",
+    "recipient": "Marketing",
+    "task_type": "LAUNCH_CAMPAIGN",
+    "context": {
+      "project_id": "feeadcd2-4398-4feb-a134-014fe5853a2c"
+    },
+    "payload": {
+      "product_name": "AI-Enterprise-Suite",
+      "features": [
+        {
+          "name": "AI-Powered Analytics Dashboard",
+          "impact": "high"
+        },
+        {
+          "name": "Multi-Tenant SSO Integration",
+          "impact": "high"
+        },
+        {
+          "name": "Automated Onboarding Flow",
+          "impact": "high"
+        },
+        {
+          "name": "Usage-Based Billing Module",
+          "impact": "medium"
+        },
+        {
+          "name": "In-App Help Center",
+          "impact": "medium"
+        }
+      ]
+    },
+    "status": "pending",
+    "error": ""
+  },
+  {
+    "id": "6d5e2889-4d3e-4764-ab44-82dc77903f2c",
+    "timestamp": "2026-04-03T01:57:15.246332+00:00",
+    "sender": "PM",
+    "recipient": "Marketing",
+    "task_type": "PM_REPORT",
+    "context": {
+      "project_id": "feeadcd2-4398-4feb-a134-014fe5853a2c"
+    },
+    "payload": {
+      "project_name": "AI-Enterprise-Suite",
+      "must_count": 3,
+      "should_count": 2,
+      "status": "roadmap_defined"
+    },
+    "status": "pending",
+    "error": ""
   }
 ]
