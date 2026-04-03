@@ -15,6 +15,7 @@ This repository implements:
 - **Product Manager Agent** (owns product roadmap and feature prioritization)
 - **Marketing Agent** (builds campaigns, content, and metrics tracking)
 - **Shared Message Bus** (asynchronous queue + persistent logs)
+- **SQLite Storage Layer** for multi-project persistence and project event history
 - **JSON Message Schema** for inter-agent communication
 
 ## Repository Structure
@@ -36,14 +37,14 @@ This repository implements:
 
 ## Shared Message Envelope
 
-All messages use:
+All inter-agent messages must use this mandatory shared envelope:
 
 ```json
 {
   "id": "<uuid>",
   "timestamp": "<iso8601>",
   "sender": "<agent_name>",
-  "recipient": "<agent_name | external_team>",
+  "recipient": "<agent_name | broadcast>",
   "task_type": "<string>",
   "context": {},
   "payload": {},
@@ -51,6 +52,11 @@ All messages use:
   "error": "<optional>"
 }
 ```
+
+Rules:
+- The outer envelope is identical system-wide and validated before queueing/persisting.
+- Teams can only customize the content inside `payload`.
+- `payload` stays agent/domain-specific, but cannot change envelope keys or types.
 
 ## Agent Responsibilities
 
@@ -88,13 +94,45 @@ From repository root:
 python3 src/main.py
 ```
 
+### Optional runtime configuration
+
+The app runs with no extra setup using built-in fallbacks.
+
+Environment variables:
+
+- `APP_DB_PATH` (default: `data/agent_store.db`) — database file path
+- `BACKLOG_PATH` (default: `data/backlog.json`) — backlog JSON artifact path
+- `OPENAI_BASE_URL` + `OPENAI_API_KEY` (+ optional `OPENAI_MODEL`) — cloud LLM endpoint (OpenAI-compatible)
+
+LLM provider fallback order:
+1. Local Ollama (`ollama` Python package + local model)
+2. Cloud endpoint using `OPENAI_BASE_URL`/`OPENAI_API_KEY`
+3. Deterministic local fallback JSON
+
+This lets the same code run on machines with local models, cloud-only setups, or no model access.
+
 ## Expected Output Artifacts
 
 - `data/messages.json` — full message history
 - `data/backlog.json` — PM roadmap output
 - `data/projects.json` — PM project and request records
 - `data/campaigns.json` — saved campaign plans
+- `data/agent_store.db` — normalized database for projects, project events, messages, backlog, campaigns
 - `logs/app.log` — runtime log
+
+## Database model (multi-project storage)
+
+The SQLite storage captures:
+
+- `projects` — project id, name, goal, description, status, metadata, timestamps
+- `project_events` — append-only updates whenever PM/Marketing process project-relevant inputs/outputs
+- `messages` — persisted envelope records with project linkage
+- `backlog_entries` — normalized PM prioritized feature sets per project
+- `campaigns` — marketing campaign records tied to projects
+
+Project matching uses:
+- explicit `project_id` in incoming context when present
+- otherwise active project by product name
 
 ## Sample JSON Scenarios (All PM + Marketing Cases)
 
@@ -114,5 +152,5 @@ Included scenarios:
 
 ## Notes
 
-- Ollama is optional; fallback outputs are used if local LLM is unavailable.
+- Ollama is optional; cloud OpenAI-compatible endpoints are also supported via env vars.
 - Current runtime implementation is PM + Marketing only (no CEO agent runtime module).

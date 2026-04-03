@@ -1,24 +1,26 @@
 import json
-import uuid
 import os
 from datetime import datetime, timezone
+from llm_provider import llm_json_array
+from storage import storage
+
+def _resolve_project_id(name, payload, existing):
+    payload_project_id = payload.get("project_id") if isinstance(payload, dict) else None
+    if payload_project_id is not None:
+        return payload_project_id
+    if existing:
+        return existing["id"]
+    return None
 
 def generate_features_llm(goal):
-    try:
-        from ollama import chat
-        res = chat(model='mistral', messages=[{
-            'role': 'user',
-            'content': (
-                f"List 6 product features to achieve this goal: {goal}. "
-                "Respond ONLY with a JSON array. Each item must have 'name' (string) "
-                "and 'impact' (one of: high, medium, low). "
-                "Example: [{\"name\": \"Feature A\", \"impact\": \"high\"}]"
-            )
-        }])
-        text = res.message.content.strip()
-        text = text[text.index("["):text.rindex("]") + 1]
-        features = json.loads(text)
-    except Exception:
+    prompt = (
+        f"List 6 product features to achieve this goal: {goal}. "
+        "Respond ONLY with a JSON array. Each item must have 'name' (string) "
+        "and 'impact' (one of: high, medium, low). "
+        "Example: [{\"name\": \"Feature A\", \"impact\": \"high\"}]"
+    )
+    features = llm_json_array(prompt)
+    if not features:
         features = [
             {"name": "AI-Powered Analytics Dashboard", "impact": "high"},
             {"name": "Multi-Tenant SSO Integration", "impact": "high"},
@@ -42,21 +44,39 @@ def save_backlog(data):
         json.dump(data, f, indent=2)
 
 def create_project(name, goal, payload):
+    existing = storage.find_active_project_by_name(name)
+    resolved_id = _resolve_project_id(name, payload, existing)
+    project = storage.upsert_project(
+        name=name,
+        goal=goal,
+        payload=payload,
+        project_id=resolved_id,
+        description=(payload or {}).get("description", ""),
+        status="active",
+    )
     os.makedirs("data", exist_ok=True)
     projects = []
     if os.path.exists("data/projects.json"):
         with open("data/projects.json", "r") as f:
             projects = json.load(f)
-    project = {
-        "id": str(uuid.uuid4()),
-        "name": name,
-        "goal": goal,
-        "payload": payload,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "status": "active",
-        "requests": []
+    match_idx = next((idx for idx, p in enumerate(projects) if p.get("id") == project["id"]), None)
+    record = {
+        "id": project["id"],
+        "name": project["name"],
+        "goal": project["goal"],
+        "payload": project.get("payload", {}),
+        "description": project.get("description", ""),
+        "created_at": project.get("created_at", datetime.now(timezone.utc).isoformat()),
+        "updated_at": project.get("updated_at", datetime.now(timezone.utc).isoformat()),
+        "status": project.get("status", "active"),
+        "requests": [],
     }
-    projects.append(project)
+    if match_idx is None:
+        projects.append(record)
+    else:
+        previous_requests = projects[match_idx].get("requests", [])
+        record["requests"] = previous_requests
+        projects[match_idx] = record
     with open("data/projects.json", "w") as f:
         json.dump(projects, f, indent=2)
     return project
@@ -72,3 +92,10 @@ def add_request_to_project(project_id, request):
             break
     with open("data/projects.json", "w") as f:
         json.dump(projects, f, indent=2)
+    storage.add_project_event(
+        source="PM",
+        event_type=request.get("type", "project_request"),
+        project_id=project_id,
+        message_id=request.get("message_id"),
+        details=request,
+    )
