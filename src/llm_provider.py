@@ -1,6 +1,9 @@
 import json
 import os
+import logging
 from urllib import error, request
+
+logger = logging.getLogger(__name__)
 
 
 def _extract_json_array(text: str):
@@ -81,14 +84,14 @@ def llm_json_array(prompt: str):
     if text:
         try:
             return _extract_json_array(text)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("Failed to parse Ollama JSON array response: %s", exc)
     text = _try_openai_compatible(prompt)
     if text:
         try:
             return _extract_json_array(text)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("Failed to parse OpenAI-compatible JSON array response: %s", exc)
     return None
 
 
@@ -97,12 +100,12 @@ def llm_json_object(prompt: str):
     if text:
         try:
             return _extract_json_object(text)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("Failed to parse Ollama JSON object response: %s", exc)
     text = _try_openai_compatible(prompt)
     if text:
         try:
             return _extract_json_object(text)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("Failed to parse OpenAI-compatible JSON object response: %s", exc)
     return None

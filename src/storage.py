@@ -265,6 +265,7 @@ class Storage:
             conn.commit()
 
     def save_backlog(self, project_id: Optional[str], prioritized: Dict[str, List[Dict[str, Any]]]) -> None:
+        # Always write the JSON artifact for compatibility; DB sync is skipped when project_id is missing.
         backlog_dir = os.path.dirname(self.backlog_path)
         if backlog_dir:
             os.makedirs(backlog_dir, exist_ok=True)

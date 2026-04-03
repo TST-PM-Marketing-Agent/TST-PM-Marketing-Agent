@@ -37,8 +37,9 @@ def save_backlog(data):
 
 def create_project(name, goal, payload):
     existing = storage.find_active_project_by_name(name)
-    resolved_id = payload.get("project_id") if isinstance(payload, dict) else None
-    if not resolved_id and existing:
+    payload_project_id = payload.get("project_id") if isinstance(payload, dict) else None
+    resolved_id = payload_project_id
+    if existing and (payload_project_id is None or payload_project_id != existing["id"]):
         resolved_id = existing["id"]
     project = storage.upsert_project(
         name=name,

@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Optional, Dict, Any
 from message_bus import get_messages_for, send_message
 from message_schema import Message
 from pm_tools import generate_features_llm, moscow_prioritize, save_backlog, create_project, add_request_to_project
@@ -23,7 +24,8 @@ class PMAgent:
             else:
                 logging.warning(f"PMAgent: Unhandled task {task}")
 
-    def _ensure_active_project(self, project_id):
+    def _ensure_active_project(self, project_id: Optional[str]) -> Optional[Dict[str, Any]]:
+        """Load and set the active project for the provided project_id when available."""
         if not project_id:
             return None
         if self._active_project and self._active_project.get("id") == project_id:
