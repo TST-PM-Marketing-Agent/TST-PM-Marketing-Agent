@@ -24,6 +24,11 @@ class Storage:
     def _connect(self) -> sqlite3.Connection:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        foreign_keys_enabled = conn.execute("PRAGMA foreign_keys").fetchone()
+        if foreign_keys_enabled is None or foreign_keys_enabled[0] != 1:
+            conn.close()
+            raise RuntimeError("Failed to enable SQLite foreign key enforcement")
         return conn
 
     def _init_db(self) -> None:
