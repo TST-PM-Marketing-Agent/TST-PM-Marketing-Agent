@@ -1,0 +1,49 @@
+[
+  {
+    "id": "9a346b0b-818f-4d5a-9837-dfec345fc97a",
+    "name": "AI-Enterprise-Suite",
+    "goal": "Increase SaaS revenue by 15%",
+    "payload": {
+      "business_goal": "Increase SaaS revenue by 15%",
+      "constraints": [
+        "Focus on SMB customers",
+        "3-engineer capacity"
+      ],
+      "product_name": "AI-Enterprise-Suite"
+    },
+    "created_at": "2026-04-03T00:43:05.162419+00:00",
+    "status": "active",
+    "requests": [
+      {
+        "type": "roadmap",
+        "message_id": "ce544197-d41d-4993-93ff-5954230bcb65",
+        "features": [
+          {
+            "name": "AI-Powered Analytics Dashboard",
+            "impact": "high"
+          },
+          {
+            "name": "Multi-Tenant SSO Integration",
+            "impact": "high"
+          },
+          {
+            "name": "Automated Onboarding Flow",
+            "impact": "high"
+          },
+          {
+            "name": "Usage-Based Billing Module",
+            "impact": "medium"
+          },
+          {
+            "name": "In-App Help Center",
+            "impact": "medium"
+          },
+          {
+            "name": "Dark Mode UI",
+            "impact": "low"
+          }
+        ]
+      }
+    ]
+  }
+]

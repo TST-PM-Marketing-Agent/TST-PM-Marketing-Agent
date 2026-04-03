@@ -1,0 +1,69 @@
+[
+  {
+    "received_at": "2026-04-03T00:43:05.164888+00:00",
+    "message": {
+      "id": "dc2477f6-d260-46f5-9d6e-a950e7ee45f8",
+      "timestamp": "2026-04-03T00:43:05.163439+00:00",
+      "sender": "PM",
+      "recipient": "CEO",
+      "task_type": "PM_REPORT",
+      "context": {
+        "project_id": "9a346b0b-818f-4d5a-9837-dfec345fc97a"
+      },
+      "payload": {
+        "project_name": "AI-Enterprise-Suite",
+        "must_count": 3,
+        "should_count": 2,
+        "status": "roadmap_defined"
+      },
+      "status": "pending",
+      "error": ""
+    }
+  },
+  {
+    "received_at": "2026-04-03T00:43:05.165069+00:00",
+    "message": {
+      "id": "72327b42-8522-4fc2-90ad-21d17ba6d298",
+      "timestamp": "2026-04-03T00:43:05.163849+00:00",
+      "sender": "Marketing",
+      "recipient": "CEO",
+      "task_type": "MARKETING_REPORT",
+      "context": {
+        "quarter": "Q2",
+        "year": 2026
+      },
+      "payload": {
+        "status": "strategy_ready",
+        "product_name": "AI-Enterprise-Suite",
+        "channels": [
+          "Email",
+          "Social",
+          "SEO"
+        ]
+      },
+      "status": "pending",
+      "error": ""
+    }
+  },
+  {
+    "received_at": "2026-04-03T00:43:05.165291+00:00",
+    "message": {
+      "id": "6a15d5be-409c-4441-9ad5-60727e8d2d25",
+      "timestamp": "2026-04-03T00:43:05.164522+00:00",
+      "sender": "Marketing",
+      "recipient": "CEO",
+      "task_type": "MARKETING_REPORT",
+      "context": {
+        "project_id": "9a346b0b-818f-4d5a-9837-dfec345fc97a"
+      },
+      "payload": {
+        "status": "campaign_launched",
+        "product_name": "AI-Enterprise-Suite",
+        "budget": 8000,
+        "expected_leads": 150
+      },
+      "status": "pending",
+      "error": ""
+    }
+  }
+]
