@@ -3,7 +3,7 @@ import os
 from typing import Optional, Dict, Any
 from message_bus import get_messages_for, send_message
 from message_schema import Message
-from pm_tools import generate_features_llm, moscow_prioritize, save_backlog, create_project, add_request_to_project
+from pm_tools import generate_features_llm, moscow_prioritize, create_project, add_request_to_project
 from storage import storage
 
 class PMAgent:
@@ -59,7 +59,6 @@ class PMAgent:
         prioritized = moscow_prioritize(features)
         logging.info(f"PMAgent backlog: {prioritized}")
 
-        save_backlog(prioritized)
         storage.save_backlog(project["id"], prioritized)
         storage.add_project_event(
             source=self.name,
