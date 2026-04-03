@@ -15,10 +15,13 @@ class MarketingAgent:
         for m in msgs:
             if m['task_type'] == "LAUNCH_CAMPAIGN":
                 self.handle_launch_campaign(m)
-            elif m['task_type'] == "BUDGET_APPROVED":
-                self.handle_budget_approved(m)
+            elif m['task_type'] == "PM_REPORT":
+                self.handle_pm_report(m)
             else:
                 logging.warning(f"MarketingAgent: Unhandled {m['task_type']}")
+
+    def handle_pm_report(self, msg):
+        logging.info(f"MarketingAgent received PM report: {msg['id']}")
 
     def handle_launch_campaign(self, msg):
         logging.info(f"MarketingAgent received campaign request: {msg['id']}")
@@ -30,22 +33,5 @@ class MarketingAgent:
         campaign = plan_campaign(product, features)
         campaign["project_id"] = project_id
         logging.info(f"MarketingAgent plan: {campaign}")
-
-        if campaign.get("budget", 0) > 10000:
-            logging.info("Budget > $10k, escalating to CEO")
-            send_message(Message.create(
-                sender=self.name,
-                recipient="CEO",
-                task_type="BUDGET_APPROVAL",
-                context={"project_id": project_id},
-                payload=campaign
-            ))
-        else:
-            save_campaign(campaign)
-            logging.info("MarketingAgent: campaign saved")
-
-    def handle_budget_approved(self, msg):
-        logging.info(f"MarketingAgent: budget approved for message {msg['id']}")
-        campaign = msg['payload']
         save_campaign(campaign)
-        logging.info("MarketingAgent: approved campaign saved")
+        logging.info("MarketingAgent: campaign saved")

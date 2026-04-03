@@ -1,7 +1,7 @@
 import json
 import uuid
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 def generate_features_llm(goal):
     try:
@@ -52,7 +52,7 @@ def create_project(name, goal, payload):
         "name": name,
         "goal": goal,
         "payload": payload,
-        "created_at": datetime.utcnow().isoformat() + "Z",
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "status": "active",
         "requests": []
     }

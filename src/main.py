@@ -3,7 +3,7 @@ from message_bus import send_message
 from orchestrator import run_cycle
 
 msg = Message.create(
-    sender="CEO",
+    sender="User",
     recipient="PM",
     task_type="DEFINE_Q2_ROADMAP",
     context={"quarter": "Q2", "year": 2026},
@@ -17,5 +17,7 @@ send_message(msg)
 
 run_cycle()
 run_cycle()
+run_cycle()
+run_cycle()
 
-print("Simulation complete. Check backlog.json and campaigns.json.")
+print("Simulation complete. Check data/backlog.json and data/campaigns.json.")

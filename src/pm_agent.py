@@ -1,7 +1,7 @@
 import logging
 import os
 from message_bus import get_messages_for, send_message
-from message-schema import Message
+from message_schema import Message
 from pm_tools import generate_features_llm, moscow_prioritize, save_backlog, create_project, add_request_to_project
 
 class PMAgent:
@@ -55,6 +55,20 @@ class PMAgent:
             payload={"product_name": product, "features": feature_list}
         ))
         logging.info("PMAgent: LAUNCH_CAMPAIGN sent to Marketing")
+
+        send_message(Message.create(
+            sender=self.name,
+            recipient="Marketing",
+            task_type="PM_REPORT",
+            context={"project_id": project["id"]},
+            payload={
+                "project_name": product,
+                "must_count": len(prioritized["must"]),
+                "should_count": len(prioritized["should"]),
+                "status": "roadmap_defined"
+            }
+        ))
+        logging.info("PMAgent: PM_REPORT sent to Marketing")
 
     def handle_feature_request(self, msg):
         logging.info(f"PMAgent received feature request: {msg['id']}")
