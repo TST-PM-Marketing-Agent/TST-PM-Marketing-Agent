@@ -23,6 +23,16 @@ class PMAgent:
             else:
                 logging.warning(f"PMAgent: Unhandled task {task}")
 
+    def _ensure_active_project(self, project_id):
+        if not project_id:
+            return None
+        if self._active_project and self._active_project.get("id") == project_id:
+            return self._active_project
+        project = storage.get_project(project_id)
+        if project:
+            self._active_project = project
+        return project
+
     def handle_define_roadmap(self, msg):
         logging.info(f"PMAgent received roadmap request: {msg['id']}")
         payload = msg['payload']
@@ -30,7 +40,7 @@ class PMAgent:
         product = payload.get("product_name", "Product")
 
         project = create_project(name=product, goal=goal, payload=payload)
-        self._active_project = project
+        self._ensure_active_project(project["id"])
         logging.info(f"PMAgent created project: {project['id']}")
 
         features = generate_features_llm(goal)
@@ -98,6 +108,7 @@ class PMAgent:
             project_id = context_project_id
         elif self._active_project:
             project_id = self._active_project["id"]
+        self._ensure_active_project(project_id)
         if project_id:
             add_request_to_project(project_id, {
                 "type": "feature_request",
@@ -105,10 +116,6 @@ class PMAgent:
                 "message_id": msg["id"],
                 "features": features
             })
-        if project_id and not self._active_project:
-            project = storage.get_project(project_id)
-            if project:
-                self._active_project = project
         storage.add_project_event(
             source=self.name,
             event_type="feature_response_prepared",

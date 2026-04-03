@@ -14,6 +14,7 @@ class Storage:
     def __init__(self, db_path: Optional[str] = None) -> None:
         configured = db_path or os.getenv("APP_DB_PATH", "data/agent_store.db")
         self.db_path = configured
+        self.backlog_path = os.getenv("BACKLOG_PATH", "data/backlog.json")
         db_dir = os.path.dirname(self.db_path)
         if db_dir:
             os.makedirs(db_dir, exist_ok=True)
@@ -264,8 +265,10 @@ class Storage:
             conn.commit()
 
     def save_backlog(self, project_id: Optional[str], prioritized: Dict[str, List[Dict[str, Any]]]) -> None:
-        os.makedirs("data", exist_ok=True)
-        with open("data/backlog.json", "w") as f:
+        backlog_dir = os.path.dirname(self.backlog_path)
+        if backlog_dir:
+            os.makedirs(backlog_dir, exist_ok=True)
+        with open(self.backlog_path, "w") as f:
             json.dump(prioritized, f, indent=2)
         if not project_id:
             return

@@ -4,11 +4,29 @@ from urllib import error, request
 
 
 def _extract_json_array(text: str):
-    return json.loads(text[text.index("["):text.rindex("]") + 1])
+    try:
+        start = text.index("[")
+        end = text.rindex("]") + 1
+    except ValueError as exc:
+        raise ValueError("Model response does not include a JSON array.") from exc
+    raw = text[start:end]
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Model response contained an invalid JSON array.") from exc
 
 
 def _extract_json_object(text: str):
-    return json.loads(text[text.index("{"):text.rindex("}") + 1])
+    try:
+        start = text.index("{")
+        end = text.rindex("}") + 1
+    except ValueError as exc:
+        raise ValueError("Model response does not include a JSON object.") from exc
+    raw = text[start:end]
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Model response contained an invalid JSON object.") from exc
 
 
 def _try_ollama(prompt: str):
@@ -46,8 +64,15 @@ def _try_openai_compatible(prompt: str):
     try:
         with request.urlopen(req, timeout=30) as response:
             payload = json.loads(response.read().decode("utf-8"))
-            return payload["choices"][0]["message"]["content"].strip()
-    except (error.URLError, error.HTTPError, KeyError, ValueError, TimeoutError):
+            choices = payload.get("choices", [])
+            if not choices:
+                return None
+            message = choices[0].get("message", {})
+            content = message.get("content")
+            if not isinstance(content, str):
+                return None
+            return content.strip()
+    except (error.URLError, error.HTTPError, ValueError, TimeoutError):
         return None
 
 

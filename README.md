@@ -96,6 +96,7 @@ The app runs with no extra setup using built-in fallbacks.
 Environment variables:
 
 - `APP_DB_PATH` (default: `data/agent_store.db`) — database file path
+- `BACKLOG_PATH` (default: `data/backlog.json`) — backlog JSON artifact path
 - `OPENAI_BASE_URL` + `OPENAI_API_KEY` (+ optional `OPENAI_MODEL`) — cloud LLM endpoint (OpenAI-compatible)
 
 LLM provider fallback order:
