@@ -35,7 +35,6 @@ The system demonstrates a Week 7 deliverable:
     ├── main.py
     ├── marketing_agent.py
     ├── marketing_tools.py
-    ├── message-schema.py
     ├── message_bus.py
     ├── message_schema.py
     ├── orchestrator.py
