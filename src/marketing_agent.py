@@ -17,8 +17,25 @@ class MarketingAgent:
                 self.handle_launch_campaign(m)
             elif m['task_type'] == "BUDGET_APPROVED":
                 self.handle_budget_approved(m)
+            elif m['task_type'] == "PREPARE_CAMPAIGN_STRATEGY":
+                self.handle_prepare_campaign_strategy(m)
             else:
                 logging.warning(f"MarketingAgent: Unhandled {m['task_type']}")
+
+    def handle_prepare_campaign_strategy(self, msg):
+        payload = msg.get("payload", {})
+        send_message(Message.create(
+            sender=self.name,
+            recipient="CEO",
+            task_type="MARKETING_REPORT",
+            context=msg.get("context", {}),
+            payload={
+                "status": "strategy_ready",
+                "product_name": payload.get("product_name", "Product"),
+                "channels": ["Email", "Social", "SEO"]
+            }
+        ))
+        logging.info("MarketingAgent: MARKETING_REPORT sent to CEO")
 
     def handle_launch_campaign(self, msg):
         logging.info(f"MarketingAgent received campaign request: {msg['id']}")
@@ -43,9 +60,35 @@ class MarketingAgent:
         else:
             save_campaign(campaign)
             logging.info("MarketingAgent: campaign saved")
+            send_message(Message.create(
+                sender=self.name,
+                recipient="CEO",
+                task_type="MARKETING_REPORT",
+                context={"project_id": project_id},
+                payload={
+                    "status": "campaign_launched",
+                    "product_name": product,
+                    "budget": campaign.get("budget", 0),
+                    "expected_leads": campaign.get("expected_leads", 0)
+                }
+            ))
+            logging.info("MarketingAgent: MARKETING_REPORT sent to CEO")
 
     def handle_budget_approved(self, msg):
         logging.info(f"MarketingAgent: budget approved for message {msg['id']}")
         campaign = msg['payload']
         save_campaign(campaign)
         logging.info("MarketingAgent: approved campaign saved")
+        send_message(Message.create(
+            sender=self.name,
+            recipient="CEO",
+            task_type="MARKETING_REPORT",
+            context=msg.get("context", {}),
+            payload={
+                "status": "campaign_launched_post_approval",
+                "product_name": campaign.get("product", "Product"),
+                "budget": campaign.get("budget", 0),
+                "expected_leads": campaign.get("expected_leads", 0)
+            }
+        ))
+        logging.info("MarketingAgent: post-approval MARKETING_REPORT sent to CEO")
