@@ -35,6 +35,14 @@ class PMAgent:
             self._active_project = project
         return project
 
+    def _resolve_project_id(self, msg: Dict[str, Any]) -> Optional[str]:
+        context_project_id = msg.get("context", {}).get("project_id")
+        if context_project_id:
+            return context_project_id
+        if self._active_project:
+            return self._active_project.get("id")
+        return None
+
     def handle_define_roadmap(self, msg):
         logging.info(f"PMAgent received roadmap request: {msg['id']}")
         payload = msg['payload']
@@ -104,12 +112,7 @@ class PMAgent:
         features = generate_features_llm(goal)
         prioritized = moscow_prioritize(features)
 
-        project_id = None
-        context_project_id = msg.get("context", {}).get("project_id")
-        if context_project_id:
-            project_id = context_project_id
-        elif self._active_project:
-            project_id = self._active_project["id"]
+        project_id = self._resolve_project_id(msg)
         self._ensure_active_project(project_id)
         if project_id:
             add_request_to_project(project_id, {

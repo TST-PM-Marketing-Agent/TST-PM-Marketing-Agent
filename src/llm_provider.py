@@ -75,7 +75,8 @@ def _try_openai_compatible(prompt: str):
             if not isinstance(content, str):
                 return None
             return content.strip()
-    except (error.URLError, error.HTTPError, ValueError, TimeoutError):
+    except (error.URLError, error.HTTPError, ValueError, TimeoutError) as exc:
+        logger.warning("OpenAI-compatible provider request failed: %s", exc)
         return None
 
 

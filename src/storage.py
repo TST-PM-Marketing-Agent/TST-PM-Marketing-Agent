@@ -4,6 +4,7 @@ import sqlite3
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
+from message_schema import Message
 
 
 def _utc_now() -> str:
@@ -234,6 +235,7 @@ class Storage:
             conn.commit()
 
     def save_message(self, msg: Dict[str, Any]) -> None:
+        Message.validate_envelope(msg)
         context = msg.get("context", {}) or {}
         project_id = context.get("project_id")
         with self._connect() as conn:
@@ -265,7 +267,8 @@ class Storage:
             conn.commit()
 
     def save_backlog(self, project_id: Optional[str], prioritized: Dict[str, List[Dict[str, Any]]]) -> None:
-        # Always write the JSON artifact for compatibility; DB sync is skipped when project_id is missing.
+        # Always write the JSON artifact to preserve existing file-based outputs;
+        # when project_id is missing, DB normalization is intentionally skipped.
         backlog_dir = os.path.dirname(self.backlog_path)
         if backlog_dir:
             os.makedirs(backlog_dir, exist_ok=True)

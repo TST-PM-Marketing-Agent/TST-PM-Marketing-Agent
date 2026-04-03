@@ -37,14 +37,14 @@ This repository implements:
 
 ## Shared Message Envelope
 
-All messages use:
+All inter-agent messages must use this mandatory shared envelope:
 
 ```json
 {
   "id": "<uuid>",
   "timestamp": "<iso8601>",
   "sender": "<agent_name>",
-  "recipient": "<agent_name | external_team>",
+  "recipient": "<agent_name | broadcast>",
   "task_type": "<string>",
   "context": {},
   "payload": {},
@@ -52,6 +52,11 @@ All messages use:
   "error": "<optional>"
 }
 ```
+
+Rules:
+- The outer envelope is identical system-wide and validated before queueing/persisting.
+- Teams can only customize the content inside `payload`.
+- `payload` stays agent/domain-specific, but cannot change envelope keys or types.
 
 ## Agent Responsibilities
 

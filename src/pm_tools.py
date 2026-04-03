@@ -4,6 +4,12 @@ from datetime import datetime, timezone
 from llm_provider import llm_json_array
 from storage import storage
 
+def _resolve_project_id(name, payload, existing):
+    payload_project_id = payload.get("project_id") if isinstance(payload, dict) else None
+    if existing and (payload_project_id is None or payload_project_id != existing["id"]):
+        return existing["id"]
+    return payload_project_id
+
 def generate_features_llm(goal):
     prompt = (
         f"List 6 product features to achieve this goal: {goal}. "
@@ -37,10 +43,7 @@ def save_backlog(data):
 
 def create_project(name, goal, payload):
     existing = storage.find_active_project_by_name(name)
-    payload_project_id = payload.get("project_id") if isinstance(payload, dict) else None
-    resolved_id = payload_project_id
-    if existing and (payload_project_id is None or payload_project_id != existing["id"]):
-        resolved_id = existing["id"]
+    resolved_id = _resolve_project_id(name, payload, existing)
     project = storage.upsert_project(
         name=name,
         goal=goal,
