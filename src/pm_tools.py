@@ -6,9 +6,11 @@ from storage import storage
 
 def _resolve_project_id(name, payload, existing):
     payload_project_id = payload.get("project_id") if isinstance(payload, dict) else None
-    if existing and (payload_project_id is None or payload_project_id != existing["id"]):
+    if payload_project_id is not None:
+        return payload_project_id
+    if existing:
         return existing["id"]
-    return payload_project_id
+    return None
 
 def generate_features_llm(goal):
     prompt = (
