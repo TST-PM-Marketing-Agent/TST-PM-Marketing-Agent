@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass, asdict
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict
 
 
@@ -20,7 +20,7 @@ class Message:
     def create(sender: str, recipient: str, task_type: str, context=None, payload=None):
         return Message(
             id=str(uuid.uuid4()),
-            timestamp=datetime.utcnow().isoformat() + "Z",
+            timestamp=datetime.now(timezone.utc).isoformat(),
             sender=sender,
             recipient=recipient,
             task_type=task_type,

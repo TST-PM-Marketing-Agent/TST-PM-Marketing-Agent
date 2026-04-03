@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from message_bus import get_messages_for, send_message
 from message_schema import Message
@@ -64,7 +64,7 @@ class CEOAgent:
                 reports = json.load(f)
         reports.append(
             {
-                "received_at": datetime.utcnow().isoformat() + "Z",
+                "received_at": datetime.now(timezone.utc).isoformat(),
                 "message": msg,
             }
         )
@@ -75,7 +75,7 @@ class CEOAgent:
         logging.info(f"CEOAgent received budget approval request: {msg['id']}")
         campaign = msg["payload"]
         campaign["approved_by"] = self.name
-        campaign["approved_at"] = datetime.utcnow().isoformat() + "Z"
+        campaign["approved_at"] = datetime.now(timezone.utc).isoformat()
         send_message(
             Message.create(
                 sender=self.name,
