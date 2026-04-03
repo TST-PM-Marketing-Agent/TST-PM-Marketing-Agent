@@ -4,8 +4,8 @@ from orchestrator import run_cycle
 
 msg = Message.create(
     sender="User",
-    recipient="CEO",
-    task_type="START_BUSINESS_CYCLE",
+    recipient="PM",
+    task_type="DEFINE_Q2_ROADMAP",
     context={"quarter": "Q2", "year": 2026},
     payload={
         "business_goal": "Increase SaaS revenue by 15%",
@@ -20,4 +20,4 @@ run_cycle()
 run_cycle()
 run_cycle()
 
-print("Simulation complete. Check data/backlog.json, data/campaigns.json, and data/ceo_reports.json.")
+print("Simulation complete. Check data/backlog.json and data/campaigns.json.")

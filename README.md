@@ -1,6 +1,6 @@
 # TST PM + Marketing Agent
 
-PM + Marketing multi-agent simulation for the AI Enterprise project, now integrated with a CEO-driven Week 7 message-bus workflow.
+PM + Marketing multi-agent simulation for the AI Enterprise project using a shared JSON message bus.
 
 ## Team
 
@@ -10,20 +10,12 @@ PM + Marketing multi-agent simulation for the AI Enterprise project, now integra
 
 ## Overview
 
-This repository implements a lightweight enterprise simulation with:
+This repository implements:
 
-- **CEO Agent** (orchestrates, delegates, approves high-budget actions)
-- **Product Manager Agent** (creates roadmap/backlog from business goals)
-- **Marketing Agent** (plans and launches campaigns, escalates high budget)
+- **Product Manager Agent** (owns product roadmap and feature prioritization)
+- **Marketing Agent** (builds campaigns, content, and metrics tracking)
 - **Shared Message Bus** (asynchronous queue + persistent logs)
-- **Mandatory JSON Message Schema** across all inter-agent communication
-
-The system demonstrates a Week 7 deliverable:
-
-- CEO delegates tasks to **at least two agents (PM + Marketing)**
-- PM and Marketing execute role-specific work
-- Agents send structured reports back to CEO
-- Marketing escalates campaigns with budget `> $10,000` to CEO for approval
+- **JSON Message Schema** for inter-agent communication
 
 ## Repository Structure
 
@@ -31,7 +23,6 @@ The system demonstrates a Week 7 deliverable:
 .
 ├── README.md
 └── src
-    ├── ceo_agent.py
     ├── main.py
     ├── marketing_agent.py
     ├── marketing_tools.py
@@ -39,22 +30,21 @@ The system demonstrates a Week 7 deliverable:
     ├── message_schema.py
     ├── orchestrator.py
     ├── pm_agent.py
-    └── pm_tools.py
+    ├── pm_tools.py
+    └── sample_messages.json
 ```
 
-## Core Architecture
+## Shared Message Envelope
 
-### 1) Shared Message Envelope (Mandatory)
-
-All agents send/receive this envelope:
+All messages use:
 
 ```json
 {
   "id": "<uuid>",
   "timestamp": "<iso8601>",
   "sender": "<agent_name>",
-  "recipient": "<agent_name | broadcast>",
-  "task_type": "<enum/string>",
+  "recipient": "<agent_name | external_team>",
+  "task_type": "<string>",
   "context": {},
   "payload": {},
   "status": "<pending|in_progress|done|error>",
@@ -62,86 +52,33 @@ All agents send/receive this envelope:
 }
 ```
 
-- `payload` is role-specific
-- envelope fields remain consistent across all agents
-
-### 2) Message Bus
-
-`src/message_bus.py` provides:
-
-- `send_message(msg)` for queueing and persistence
-- `get_messages_for(agent_name)` for agent-specific message retrieval
-- persistent message log at `data/messages.json`
-
-### 3) Supervisor Loop
-
-`src/orchestrator.py` runs one cycle in this order:
-
-1. CEO
-2. PM
-3. Marketing
-
-Repeated cycles allow asynchronous handoffs and follow-up messages.
-
 ## Agent Responsibilities
-
-### CEO Agent (`src/ceo_agent.py`)
-
-- Handles `START_BUSINESS_CYCLE`
-- Delegates:
-  - `DEFINE_Q2_ROADMAP` → PM
-  - `PREPARE_CAMPAIGN_STRATEGY` → Marketing
-- Receives:
-  - `PM_REPORT`
-  - `MARKETING_REPORT`
-- Handles `BUDGET_APPROVAL` and sends `BUDGET_APPROVED` to Marketing
-- Persists reports to `data/ceo_reports.json`
 
 ### Product Manager Agent (`src/pm_agent.py`)
 
-- Handles `DEFINE_Q2_ROADMAP`
-- Uses tools to:
-  - generate features (LLM with fallback)
-  - prioritize with MoSCoW
-  - save backlog and project/request artifacts
-- Sends:
-  - `LAUNCH_CAMPAIGN` → Marketing
-  - `PM_REPORT` → CEO
+- Gather/analyze customer and sales feedback from incoming payloads
+- Prioritize features using MoSCoW
+- Build roadmap/backlog outputs
+- Prepare product specs for engineering/marketing handoff
+- Respond to feature requests from other teams
+- Persist outputs (`data/backlog.json`, `data/projects.json`)
 
 ### Marketing Agent (`src/marketing_agent.py`)
 
-- Handles:
-  - `PREPARE_CAMPAIGN_STRATEGY`
-  - `LAUNCH_CAMPAIGN`
-  - `BUDGET_APPROVED`
-- Uses campaign planning tool (LLM with fallback)
-- Budget policy:
-  - if `budget > 10000`: send `BUDGET_APPROVAL` → CEO
-  - else: persist campaign directly
-- Sends `MARKETING_REPORT` updates to CEO
+- Launch campaigns from PM handoff (`LAUNCH_CAMPAIGN`)
+- Create channel plan and campaign assets
+- Save campaign plans (`data/campaigns.json`)
+- Consume PM status updates (`PM_REPORT`)
+- Support budget escalation path via JSON scenarios (recipient `CEO`) when budget exceeds 10k
 
-## Tools and Persistence
+## Supervisor Loop
 
-### PM Tools (`src/pm_tools.py`)
+`src/orchestrator.py` runs one cycle:
 
-- Feature generation via Ollama (`mistral`) with deterministic fallback
-- MoSCoW prioritization
-- Project/request logging in `data/projects.json`
-- Backlog output in `data/backlog.json`
+1. PM
+2. Marketing
 
-### Marketing Tools (`src/marketing_tools.py`)
-
-- Campaign plan generation via Ollama (`mistral`) with deterministic fallback
-- Campaign persistence in `data/campaigns.json`
-
-## Week 7 Deliverables Implemented
-
-- ✅ Shared asynchronous message bus is active
-- ✅ CEO-driven delegation to PM and Marketing
-- ✅ Multi-agent scenario executed through supervisor cycles
-- ✅ Structured inter-agent messaging using the mandatory envelope
-- ✅ CEO response collection and reporting log
-- ✅ High-budget campaign escalation and approval path
+`src/main.py` seeds a `DEFINE_Q2_ROADMAP` message to PM, then runs multiple cycles to complete PM→Marketing handoff.
 
 ## How to Run
 
@@ -153,35 +90,29 @@ python3 src/main.py
 
 ## Expected Output Artifacts
 
-After running:
-
 - `data/messages.json` — full message history
 - `data/backlog.json` — PM roadmap output
 - `data/projects.json` — PM project and request records
 - `data/campaigns.json` — saved campaign plans
-- `data/ceo_reports.json` — reports received by CEO
 - `logs/app.log` — runtime log
 
-## Current Scenario Flow
+## Sample JSON Scenarios (All PM + Marketing Cases)
 
-1. User sends `START_BUSINESS_CYCLE` to CEO.
-2. CEO delegates roadmap task to PM and strategy task to Marketing.
-3. PM produces prioritized features and asks Marketing to launch campaign.
-4. Marketing plans campaign and either:
-   - launches directly (budget <= 10k), or
-   - escalates for CEO approval (budget > 10k).
-5. PM and Marketing send status reports to CEO.
-6. CEO records outcomes.
+See: `src/sample_messages.json`
 
-## Alignment to Enterprise Requirements
+Included scenarios:
 
-- **Communication protocol**: asynchronous queue + JSON envelope
-- **Decision hierarchy**: CEO delegates and approves risk/budget decisions
-- **Orchestration**: cycle-based supervisor loop
-- **Autonomy**: each agent executes role-specific logic with tools
-- **Persistence**: files in `data/` keep state across runs
+- PM roadmap intake (`DEFINE_Q2_ROADMAP`)
+- PM→Marketing campaign handoff (`LAUNCH_CAMPAIGN`)
+- PM feature request intake (`REQUEST_FEATURES`)
+- PM feature response (`FEATURE_RESPONSE`)
+- Marketing direct launch when budget <= 10000
+- Marketing budget approval request when budget > 10000
+- Marketing qualified leads handoff to Sales
+- Marketing campaign metrics report (CAC/LTV/ROI)
+- Error envelope example (`status: error`)
 
 ## Notes
 
-- Ollama is optional; tool logic includes fallback outputs if local LLM is unavailable.
-- This repo focuses on PM + Marketing scope with CEO integration for Week 7.
+- Ollama is optional; fallback outputs are used if local LLM is unavailable.
+- Current runtime implementation is PM + Marketing only (no CEO agent runtime module).

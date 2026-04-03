@@ -58,7 +58,7 @@ class PMAgent:
 
         send_message(Message.create(
             sender=self.name,
-            recipient="CEO",
+            recipient="Marketing",
             task_type="PM_REPORT",
             context={"project_id": project["id"]},
             payload={
@@ -68,7 +68,7 @@ class PMAgent:
                 "status": "roadmap_defined"
             }
         ))
-        logging.info("PMAgent: PM_REPORT sent to CEO")
+        logging.info("PMAgent: PM_REPORT sent to Marketing")
 
     def handle_feature_request(self, msg):
         logging.info(f"PMAgent received feature request: {msg['id']}")
