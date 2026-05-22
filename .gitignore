@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating system files
+.DS_Store
+
+# Local SQLite databases
+enterprise_router.db
+enterprise_router.db-journal
+enterprise_router.db-wal

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  teslastem-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: teslastem-multiagent-demo
+    ports:
+      - "8765:8765"
+    environment:
+      - ROUTER_API_PORT=8765
+      - ROUTER_API_HOST=0.0.0.0
+    restart: unless-stopped

@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*.db
+tests/.tmp/
+UI-Team/UI-Team.md
+docs
+UI-Team.md

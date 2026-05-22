@@ -1,0 +1,32 @@
+{
+  "must": [
+    {
+      "name": "Real-time Data Monitoring",
+      "impact": "high"
+    },
+    {
+      "name": "Solar Yield Tracking",
+      "impact": "high"
+    },
+    {
+      "name": "Powerwall Charge Status",
+      "impact": "high"
+    }
+  ],
+  "should": [
+    {
+      "name": "Grid Export Monitoring",
+      "impact": "medium"
+    },
+    {
+      "name": "User-friendly Dashboard Interface",
+      "impact": "medium"
+    },
+    {
+      "name": "End-to-end Solar Flow Visualization",
+      "impact": "medium"
+    }
+  ],
+  "could": [],
+  "wont": []
+}

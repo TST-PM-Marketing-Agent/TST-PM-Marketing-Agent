@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla Energy Multi-Agent Dashboard</title>
+    <!-- Modern Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #07080e;
+            --glass-bg: rgba(15, 23, 42, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            
+            /* Harmonic Neon Palette */
+            --neon-cyan: #38bdf8;
+            --neon-purple: #c084fc;
+            --neon-emerald: #34d399;
+            --neon-amber: #fbbf24;
+            --neon-rose: #f43f5e;
+            
+            --glow-cyan: 0 0 15px rgba(56, 189, 248, 0.35);
+            --glow-purple: 0 0 15px rgba(192, 132, 252, 0.35);
+            --glow-emerald: 0 0 15px rgba(52, 211, 153, 0.35);
+            
+            --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(217, 70, 239, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+
+        /* Header Styling */
+        header {
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            background: rgba(7, 8, 14, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-glow {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: var(--glow-cyan);
+            animation: pulse-glow 3s infinite alternate;
+        }
+
+        .header-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            font-size: 12px;
+            color: var(--neon-cyan);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* Container & Grid layout */
+        main {
+            flex: 1;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 40px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 32px;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            min-width: 0; /* Prevents flex items from overflowing */
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            color: #f1f5f9;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+        }
+
+        /* Active Agents Grid */
+        .agents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .agent-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            transition: var(--transition-smooth);
+        }
+
+        .agent-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+        }
+
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .agent-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .agent-avatar.ceo { border-color: var(--neon-purple); color: var(--neon-purple); }
+        .agent-avatar.pm { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+        .agent-avatar.mkt { border-color: var(--neon-amber); color: var(--neon-amber); }
+        .agent-avatar.eng { border-color: var(--neon-emerald); color: var(--neon-emerald); }
+
+        .agent-details h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-details span {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* LED Indicator Badge */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .status-led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+            transition: var(--transition-smooth);
+        }
+
+        .status-led.idle { background-color: var(--text-secondary); }
+        .status-led.polling { background-color: var(--neon-cyan); box-shadow: var(--glow-cyan); animation: pulse-led 1s infinite alternate; }
+        .status-led.processing { background-color: var(--neon-purple); box-shadow: var(--glow-purple); animation: pulse-led 1.2s infinite alternate; }
+        .status-led.success { background-color: var(--neon-emerald); box-shadow: var(--glow-emerald); }
+        .status-led.error { background-color: var(--neon-rose); box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
+
+        /* Token Ledger Grid */
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .token-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .token-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .token-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .token-card.ceo::before { background: var(--neon-purple); }
+        .token-card.pm::before { background: var(--neon-cyan); }
+        .token-card.mkt::before { background: var(--neon-amber); }
+        .token-card.eng::before { background: var(--neon-emerald); }
+
+        .token-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .token-card-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .token-card-icon {
+            font-size: 18px;
+        }
+
+        .token-balances {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .token-balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .token-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .token-value {
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-primary);
+        }
+
+        .token-value.broadcast {
+            color: var(--neon-purple);
+        }
+
+        /* Simulation Console */
+        .console-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 480px;
+        }
+
+        .console-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .console-terminal {
+            flex: 1;
+            background: rgba(5, 6, 10, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+            max-height: 520px;
+        }
+
+        /* Log Card Designs */
+        .log-row {
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .log-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .log-sender {
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .log-sender.ceo { color: var(--neon-purple); }
+        .log-sender.pm { color: var(--neon-cyan); }
+        .log-sender.marketing { color: var(--neon-amber); }
+        .log-sender.engineering { color: var(--neon-emerald); }
+        .log-sender.system { color: var(--text-secondary); }
+
+        .log-message {
+            color: #e2e8f0;
+            line-height: 1.4;
+            font-size: 13px;
+        }
+
+        /* Specific log type classes */
+        .log-row.system {
+            border-left: 3px solid var(--text-secondary);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .log-row.action {
+            border-left: 3px solid var(--neon-cyan);
+        }
+
+        .log-row.success {
+            border-left: 3px solid var(--neon-emerald);
+            background: rgba(52, 211, 153, 0.02);
+        }
+
+        .log-row.message {
+            border-left: 3px solid var(--neon-purple);
+            background: rgba(192, 132, 252, 0.02);
+        }
+
+        .log-row.error {
+            border-left: 3px solid var(--neon-rose);
+            background: rgba(244, 63, 94, 0.02);
+        }
+
+        /* JSON Expander */
+        .payload-toggle {
+            font-size: 11px;
+            color: var(--neon-cyan);
+            cursor: pointer;
+            user-select: none;
+            width: fit-content;
+            margin-top: 4px;
+        }
+
+        .payload-toggle:hover {
+            text-decoration: underline;
+        }
+
+        .payload-content {
+            display: none;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 12px;
+            color: #a7f3d0;
+            margin-top: 6px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        /* Buttons & Controls */
+        .btn-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 12px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: white;
+            box-shadow: var(--glow-cyan);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-production {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-rose));
+            color: white;
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+        }
+
+        .btn-production:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(244, 63, 94, 0.6);
+        }
+
+        .btn-production:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Pulse Animations */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+            100% { box-shadow: 0 0 25px rgba(192, 132, 252, 0.6); }
+        }
+
+        @keyframes pulse-led {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer styling */
+        footer {
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--glass-border);
+            background: rgba(7, 8, 14, 0.6);
+            backdrop-filter: blur(12px);
+        }
+
+        /* Scrollbar styles */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Auto-scroll toggle */
+        .autoscroll-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .autoscroll-btn input {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-logo">
+            <div class="logo-glow">⚡</div>
+            <div class="header-title">
+                <h1>Tesla Energy Multi-Agent Operations</h1>
+                <p>Strategic Orchestration System v0.2.0</p>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button id="run-btn" class="btn btn-primary" onclick="startSimulation()">
+                <span class="icon">🚀</span> Start Simulation
+            </button>
+            <button id="run-prod-btn" class="btn btn-production" onclick="startProductionRun()">
+                <span class="icon">✨</span> Run Live Production Agents
+            </button>
+            <button id="reset-btn" class="btn btn-secondary" onclick="resetSimulation()">
+                <span class="icon">🔄</span> Reset
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Left Side Panel: Active Agents list & controls -->
+        <div class="left-panel">
+            
+            <!-- Agent Grid -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">Agents Status</div>
+                </div>
+                <div class="agents-list">
+                    <!-- CEO -->
+                    <div class="agent-item">
+                        <div class="agent-info">
+                            <div class="agent-avatar ceo">👑</div>
+                            <div class="agent-details">
+                                <h3>CEO Agent</h3>
+                                <span>Strategic & Tokens</span>
+                            </div>
+                        </div>
+                        <div id="ceo-status" class="status-badge">
+                            <div class="status-led idle"></div>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                    <!-- PM -->
+                    <div class="agent-item">
+                        <div class="agent-info">
+                            <div class="agent-avatar pm">📝</div>
+                            <div class="agent-details">
+                                <h3>PM Agent</h3>
+                                <span>Backlog & MoSCoW</span>
+                            </div>
+                        </div>
+                        <div id="pm-status" class="status-badge">
+                            <div class="status-led idle"></div>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                    <!-- Marketing -->
+                    <div class="agent-item">
+                        <div class="agent-info">
+                            <div class="agent-avatar mkt">📣</div>
+                            <div class="agent-details">
+                                <h3>Marketing Agent</h3>
+                                <span>Campaign Plan</span>
+                            </div>
+                        </div>
+                        <div id="mkt-status" class="status-badge">
+                            <div class="status-led idle"></div>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                    <!-- Engineering -->
+                    <div class="agent-item">
+                        <div class="agent-info">
+                            <div class="agent-avatar eng">💻</div>
+                            <div class="agent-details">
+                                <h3>Engineering Agent</h3>
+                                <span>Code Generation</span>
+                            </div>
+                        </div>
+                        <div id="eng-status" class="status-badge">
+                            <div class="status-led idle"></div>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation State Display -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">System Health</div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px; font-size:13px; color:var(--text-secondary);">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>Router Status</span>
+                        <span style="color:var(--neon-emerald); font-weight:600;">ACTIVE</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>SQLite Backend</span>
+                        <span style="color:var(--neon-cyan); font-weight:600;">CONNECTED</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>Local LLM Mode</span>
+                        <span style="color:var(--neon-purple); font-weight:600;">FALLBACK / HYBRID</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Side Panel: Token Ledger and Console Stream -->
+        <div class="right-panel">
+            
+            <!-- Token Ledger Grid -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">Token Ledger Economy</div>
+                </div>
+                <div class="token-grid">
+                    <!-- CEO Card -->
+                    <div class="token-card ceo">
+                        <div class="token-card-header">
+                            <span class="token-card-name">CEO Treasury</span>
+                            <span class="token-card-icon">👑</span>
+                        </div>
+                        <div class="token-balances">
+                            <div class="token-balance-row">
+                                <span class="token-label">Standard</span>
+                                <span id="ceo-std-tokens" class="token-value">130</span>
+                            </div>
+                            <div class="token-balance-row">
+                                <span class="token-label">Broadcast</span>
+                                <span id="ceo-bc-tokens" class="token-value broadcast">15</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- PM Card -->
+                    <div class="token-card pm">
+                        <div class="token-card-header">
+                            <span class="token-card-name">Product (PM)</span>
+                            <span class="token-card-icon">📝</span>
+                        </div>
+                        <div class="token-balances">
+                            <div class="token-balance-row">
+                                <span class="token-label">Standard</span>
+                                <span id="pm-std-tokens" class="token-value">0</span>
+                            </div>
+                            <div class="token-balance-row">
+                                <span class="token-label">Broadcast</span>
+                                <span id="pm-bc-tokens" class="token-value broadcast">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Marketing Card -->
+                    <div class="token-card mkt">
+                        <div class="token-card-header">
+                            <span class="token-card-name">Marketing</span>
+                            <span class="token-card-icon">📣</span>
+                        </div>
+                        <div class="token-balances">
+                            <div class="token-balance-row">
+                                <span class="token-label">Standard</span>
+                                <span id="mkt-std-tokens" class="token-value">0</span>
+                            </div>
+                            <div class="token-balance-row">
+                                <span class="token-label">Broadcast</span>
+                                <span id="mkt-bc-tokens" class="token-value broadcast">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Engineering Card -->
+                    <div class="token-card eng">
+                        <div class="token-card-header">
+                            <span class="token-card-name">Engineering</span>
+                            <span class="token-card-icon">💻</span>
+                        </div>
+                        <div class="token-balances">
+                            <div class="token-balance-row">
+                                <span class="token-label">Standard</span>
+                                <span id="eng-std-tokens" class="token-value">0</span>
+                            </div>
+                            <div class="token-balance-row">
+                                <span class="token-label">Broadcast</span>
+                                <span id="eng-bc-tokens" class="token-value broadcast">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal / Audit Stream -->
+            <div class="glass-card console-container">
+                <div class="console-controls">
+                    <div class="card-title">Live Message & Audit Console</div>
+                    <label class="autoscroll-btn">
+                        <input type="checkbox" id="autoscroll-check" checked>
+                        Auto-scroll
+                    </label>
+                </div>
+                <div id="console-terminal" class="console-terminal">
+                    <div class="log-row system">
+                        <div class="log-meta">
+                            <span class="log-sender system">System</span>
+                            <span>READY</span>
+                        </div>
+                        <div class="log-message">Ready to launch simulation. Click "Start Simulation" in the header to run.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>Built with ❤️ by Antigravity AI pair programming. Powered by FastAPI, CrewAI, and SQLite.</p>
+    </footer>
+
+    <script>
+        let pollInterval = null;
+        const terminal = document.getElementById("console-terminal");
+        const autoscrollCheck = document.getElementById("autoscroll-check");
+        const runBtn = document.getElementById("run-btn");
+        const runProdBtn = document.getElementById("run-prod-btn");
+        let lastLogCount = 0;
+
+        function startSimulation() {
+            runBtn.disabled = true;
+            if (runProdBtn) runProdBtn.disabled = true;
+            runBtn.innerHTML = `<span class="icon">⏳</span> Launching...`;
+            
+            fetch('/demo/run', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Simulation triggered", data);
+                    lastLogCount = 0;
+                    terminal.innerHTML = "";
+                    startPolling();
+                })
+                .catch(err => {
+                    console.error(err);
+                    runBtn.disabled = false;
+                    if (runProdBtn) runProdBtn.disabled = false;
+                    runBtn.innerHTML = `<span class="icon">🚀</span> Start Simulation`;
+                });
+        }
+
+        function startProductionRun() {
+            runBtn.disabled = true;
+            if (runProdBtn) {
+                runProdBtn.disabled = true;
+                runProdBtn.innerHTML = `<span class="icon">⏳</span> Launching...`;
+            }
+            
+            fetch('/demo/production-run', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Production run triggered", data);
+                    lastLogCount = 0;
+                    terminal.innerHTML = "";
+                    startPolling();
+                })
+                .catch(err => {
+                    console.error(err);
+                    runBtn.disabled = false;
+                    if (runProdBtn) {
+                        runProdBtn.disabled = false;
+                        runProdBtn.innerHTML = `<span class="icon">✨</span> Run Live Production Agents`;
+                    }
+                });
+        }
+
+        function resetSimulation() {
+            fetch('/demo/reset')
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Simulation reset", data);
+                    stopPolling();
+                    lastLogCount = 0;
+                    terminal.innerHTML = `
+                        <div class="log-row system">
+                            <div class="log-meta">
+                                <span class="log-sender system">System</span>
+                                <span>READY</span>
+                            </div>
+                            <div class="log-message">Database wiped & reset successfully. Click "Start Simulation" to begin.</div>
+                        </div>
+                    `;
+                    updateUI({
+                        status: "idle",
+                        ledger: {
+                            "CEO": { "standard": 130, "broadcast": 15 },
+                            "PM": { "standard": 0, "broadcast": 0 },
+                            "Marketing": { "standard": 0, "broadcast": 0 },
+                            "Engineering": { "standard": 0, "broadcast": 0 }
+                        },
+                        agents: {
+                            "CEO": "idle",
+                            "PM": "idle",
+                            "Marketing": "idle",
+                            "Engineering": "idle"
+                        }
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(pollStatus, 800);
+        }
+
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+            runBtn.disabled = false;
+            runBtn.innerHTML = `<span class="icon">🚀</span> Start Simulation`;
+            if (runProdBtn) {
+                runProdBtn.disabled = false;
+                runProdBtn.innerHTML = `<span class="icon">✨</span> Run Live Production Agents`;
+            }
+        }
+
+        function pollStatus() {
+            fetch('/demo/status')
+                .then(res => res.json())
+                .then(data => {
+                    updateUI(data);
+                    if (data.status === "done" || data.status === "error") {
+                        stopPolling();
+                    }
+                })
+                .catch(err => {
+                    console.error("Polling error", err);
+                    stopPolling();
+                });
+        }
+
+        function updateUI(data) {
+            // Update Token Values
+            document.getElementById("ceo-std-tokens").innerText = data.ledger.CEO.standard;
+            document.getElementById("ceo-bc-tokens").innerText = data.ledger.CEO.broadcast;
+            
+            document.getElementById("pm-std-tokens").innerText = data.ledger.PM.standard;
+            document.getElementById("pm-bc-tokens").innerText = data.ledger.PM.broadcast;
+            
+            document.getElementById("mkt-std-tokens").innerText = data.ledger.Marketing.standard;
+            document.getElementById("mkt-bc-tokens").innerText = data.ledger.Marketing.broadcast;
+            
+            document.getElementById("eng-std-tokens").innerText = data.ledger.Engineering.standard;
+            document.getElementById("eng-bc-tokens").innerText = data.ledger.Engineering.broadcast;
+
+            // Update Agent State Badges
+            updateAgentBadge("ceo", data.agents.CEO);
+            updateAgentBadge("pm", data.agents.PM);
+            updateAgentBadge("mkt", data.agents.Marketing);
+            updateAgentBadge("eng", data.agents.Engineering);
+
+            // Update Header button if running
+            if (data.status === "running" || data.status === "booting") {
+                runBtn.disabled = true;
+                runBtn.innerHTML = `<span class="icon">⚙️</span> Running...`;
+                if (runProdBtn) {
+                    runProdBtn.disabled = true;
+                    runProdBtn.innerHTML = `<span class="icon">⚙️</span> Running...`;
+                }
+            } else {
+                runBtn.disabled = false;
+                runBtn.innerHTML = `<span class="icon">🚀</span> Start Simulation`;
+                if (runProdBtn) {
+                    runProdBtn.disabled = false;
+                    runProdBtn.innerHTML = `<span class="icon">✨</span> Run Live Production Agents`;
+                }
+            }
+
+            // Append logs
+            if (data.logs && data.logs.length > lastLogCount) {
+                for (let i = lastLogCount; i < data.logs.length; i++) {
+                    appendLog(data.logs[i]);
+                }
+                lastLogCount = data.logs.length;
+            }
+        }
+
+        function updateAgentBadge(id, state) {
+            const container = document.getElementById(`${id}-status`);
+            if (!container) return;
+
+            const led = container.querySelector(".status-led");
+            const text = container.querySelector(".status-text");
+
+            led.className = "status-led " + state;
+            text.innerText = state;
+        }
+
+        function appendLog(log) {
+            const card = document.createElement("div");
+            card.className = `log-row ${log.type}`;
+
+            let payloadToggle = "";
+            let payloadBlock = "";
+
+            if (log.payload && Object.keys(log.payload).length > 0) {
+                const uniqueId = "payload-" + Math.random().toString(36).substring(2, 9);
+                payloadToggle = `<div class="payload-toggle" onclick="togglePayload('${uniqueId}')">▶ View Payload Details</div>`;
+                payloadBlock = `<pre id="${uniqueId}" class="payload-content">${JSON.stringify(log.payload, null, 2)}</pre>`;
+            }
+
+            card.innerHTML = `
+                <div class="log-meta">
+                    <span class="log-sender ${log.agent.toLowerCase()}">${log.agent}</span>
+                    <span>${new Date(log.timestamp).toLocaleTimeString()}</span>
+                </div>
+                <div class="log-message">${log.message}</div>
+                ${payloadToggle}
+                ${payloadBlock}
+            `;
+
+            terminal.appendChild(card);
+            
+            if (autoscrollCheck.checked) {
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }
+
+        function togglePayload(id) {
+            const block = document.getElementById(id);
+            const toggle = block.previousElementSibling;
+            if (block.style.display === "block") {
+                block.style.display = "none";
+                toggle.innerText = "▶ View Payload Details";
+            } else {
+                block.style.display = "block";
+                toggle.innerText = "▼ Hide Payload Details";
+            }
+        }
+    </script>
+</body>
+</html>

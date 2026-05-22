@@ -1,0 +1,198 @@
+[
+  {
+    "id": "29404337-3e95-49cf-b3a0-2111493039cd",
+    "name": "TeslaSmartHome 2026",
+    "goal": "Design a premium end-to-end solar flow dashboard widget tracking solar yield, grid export, and Powerwall charge in real-time.",
+    "payload": {
+      "business_goal": "Design a premium end-to-end solar flow dashboard widget tracking solar yield, grid export, and Powerwall charge in real-time.",
+      "product_name": "TeslaSmartHome 2026"
+    },
+    "description": "",
+    "created_at": "2026-05-22T05:07:04.085793+00:00",
+    "updated_at": "2026-05-22T05:07:04.085793+00:00",
+    "status": "active",
+    "requests": []
+  },
+  {
+    "id": "8c472203-0228-470c-82b6-f64d949e9177",
+    "name": "Product",
+    "goal": "",
+    "payload": {
+      "approved_budget": 15000,
+      "decision": "GO",
+      "instructions": "PM and Engineering are authorized to start development immediately. Launch campaign is approved.",
+      "project_id": "8c472203-0228-470c-82b6-f64d949e9177"
+    },
+    "description": "",
+    "created_at": "2026-05-22T05:08:17.582035+00:00",
+    "updated_at": "2026-05-22T05:08:54.104784+00:00",
+    "status": "active",
+    "requests": [
+      {
+        "type": "roadmap",
+        "message_id": "msg-b5d22aaf",
+        "features": [
+          {
+            "name": "Real-time Data Tracking",
+            "impact": "high"
+          },
+          {
+            "name": "Solar Yield Monitoring",
+            "impact": "high"
+          },
+          {
+            "name": "Grid Export Measurement",
+            "impact": "medium"
+          },
+          {
+            "name": "Powerwall Charge Status",
+            "impact": "medium"
+          },
+          {
+            "name": "Customizable User Interface",
+            "impact": "low"
+          },
+          {
+            "name": "Notifications and Alerts",
+            "impact": "medium"
+          }
+        ]
+      },
+      {
+        "type": "roadmap",
+        "message_id": "msg-a026b358",
+        "features": [
+          {
+            "name": "Advanced Predictive Analytics",
+            "impact": "high"
+          },
+          {
+            "name": "Real-time Data Processing Capabilities",
+            "impact": "medium"
+          },
+          {
+            "name": "User-friendly Interface",
+            "impact": "medium"
+          },
+          {
+            "name": "Scalable Architecture",
+            "impact": "medium"
+          },
+          {
+            "name": "Integration with Third-party APIs",
+            "impact": "low"
+          },
+          {
+            "name": "Detailed Reporting and Visualization Tools",
+            "impact": "high"
+          }
+        ]
+      },
+      {
+        "type": "roadmap",
+        "message_id": "msg-c868989b",
+        "features": [
+          {
+            "name": "Secure Authentication System",
+            "impact": "high"
+          },
+          {
+            "name": "User-friendly Interface Design",
+            "impact": "medium"
+          },
+          {
+            "name": "Real-time Data Synchronization",
+            "impact": "high"
+          },
+          {
+            "name": "Scalable Infrastructure",
+            "impact": "medium"
+          },
+          {
+            "name": "Robust Error Handling and Logging",
+            "impact": "low"
+          },
+          {
+            "name": "Integration with Third-party APIs",
+            "impact": "high"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "780e5b45-9234-40d9-98e5-c8986b25b626",
+    "name": "TeslaSmartHome 2026",
+    "goal": "Design a premium end-to-end solar flow dashboard widget tracking solar yield, grid export, and Powerwall charge in real-time.",
+    "payload": {
+      "business_goal": "Design a premium end-to-end solar flow dashboard widget tracking solar yield, grid export, and Powerwall charge in real-time.",
+      "product_name": "TeslaSmartHome 2026"
+    },
+    "description": "",
+    "created_at": "2026-05-22T05:09:37.723425+00:00",
+    "updated_at": "2026-05-22T05:14:28.292493+00:00",
+    "status": "active",
+    "requests": [
+      {
+        "type": "roadmap",
+        "message_id": "msg-da27744f",
+        "features": [
+          {
+            "name": "Real-Time Data Tracking",
+            "impact": "high"
+          },
+          {
+            "name": "Solar Yield Monitoring",
+            "impact": "high"
+          },
+          {
+            "name": "Grid Export Monitoring",
+            "impact": "medium"
+          },
+          {
+            "name": "Powerwall Charge Tracker",
+            "impact": "high"
+          },
+          {
+            "name": "Intuitive User Interface",
+            "impact": "medium"
+          },
+          {
+            "name": "Integration with Solar Panels and Powerwall",
+            "impact": "high"
+          }
+        ]
+      },
+      {
+        "type": "roadmap",
+        "message_id": "msg-10d9447a",
+        "features": [
+          {
+            "name": "Real-time Data Monitoring",
+            "impact": "high"
+          },
+          {
+            "name": "Solar Yield Tracking",
+            "impact": "high"
+          },
+          {
+            "name": "Grid Export Monitoring",
+            "impact": "medium"
+          },
+          {
+            "name": "Powerwall Charge Status",
+            "impact": "high"
+          },
+          {
+            "name": "User-friendly Dashboard Interface",
+            "impact": "medium"
+          },
+          {
+            "name": "End-to-end Solar Flow Visualization",
+            "impact": "medium"
+          }
+        ]
+      }
+    ]
+  }
+]

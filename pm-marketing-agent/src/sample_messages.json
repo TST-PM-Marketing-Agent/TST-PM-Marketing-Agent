@@ -1,0 +1,289 @@
+{
+  "notes": "Sample JSON envelopes for PM and Marketing scenarios using message_schema.Message format.",
+  "scenarios": [
+    {
+      "name": "PM_define_roadmap_request",
+      "description": "User asks PM to define roadmap from business goal.",
+      "message": {
+        "id": "11111111-1111-1111-1111-111111111111",
+        "timestamp": "2026-04-03T00:00:00+00:00",
+        "sender": "User",
+        "recipient": "PM",
+        "task_type": "DEFINE_Q2_ROADMAP",
+        "context": {
+          "quarter": "Q2",
+          "year": 2026,
+          "task_id": "TASK-101"
+        },
+        "payload": {
+          "business_goal": "Increase SaaS revenue by 15%",
+          "constraints": [
+            "Focus on SMB customers",
+            "3-engineer capacity"
+          ],
+          "product_name": "AI-Enterprise-Suite",
+          "customer_data": {
+            "top_requests": [
+              "SSO",
+              "Analytics Dashboard",
+              "Public API"
+            ]
+          },
+          "sales_feedback": {
+            "lost_deals_reason": "Missing SSO and API integrations"
+          }
+        },
+        "status": "pending",
+        "error": ""
+      }
+    },
+    {
+      "name": "PM_launch_campaign_handoff",
+      "description": "PM hands prioritized roadmap output to Marketing.",
+      "message": {
+        "id": "22222222-2222-2222-2222-222222222222",
+        "timestamp": "2026-04-03T00:01:00+00:00",
+        "sender": "PM",
+        "recipient": "Marketing",
+        "task_type": "LAUNCH_CAMPAIGN",
+        "context": {
+          "project_id": "PROJECT-001",
+          "task_id": "TASK-101"
+        },
+        "payload": {
+          "product_name": "AI-Enterprise-Suite",
+          "features": [
+            {
+              "name": "Multi-Tenant SSO Integration",
+              "impact": "high",
+              "moscow": "Must"
+            },
+            {
+              "name": "AI-Powered Analytics Dashboard",
+              "impact": "high",
+              "moscow": "Must"
+            },
+            {
+              "name": "Public API",
+              "impact": "medium",
+              "moscow": "Should"
+            }
+          ],
+          "roadmap_timeline": [
+            {
+              "window": "Q2-W1 to W2",
+              "deliverable": "SSO prototype + feasibility validation"
+            },
+            {
+              "window": "Q2-W3 to W4",
+              "deliverable": "Dashboard MVP + PM release notes draft"
+            }
+          ],
+          "spec_links": [
+            "docs/specs/ai-enterprise-suite-v1.pdf"
+          ],
+          "press_release_summary": "AI-Enterprise-Suite now supports SSO, advanced dashboards, and API-led integrations."
+        },
+        "status": "pending",
+        "error": ""
+      }
+    },
+    {
+      "name": "PM_feature_request_from_other_team",
+      "description": "Another team asks PM for feature recommendations.",
+      "message": {
+        "id": "33333333-3333-3333-3333-333333333333",
+        "timestamp": "2026-04-03T00:02:00+00:00",
+        "sender": "Engineering",
+        "recipient": "PM",
+        "task_type": "REQUEST_FEATURES",
+        "context": {
+          "task_id": "TASK-ENG-022"
+        },
+        "payload": {
+          "goal": "Reduce churn in first 30 days"
+        },
+        "status": "pending",
+        "error": ""
+      }
+    },
+    {
+      "name": "PM_feature_response",
+      "description": "PM returns MoSCoW-prioritized feature response to requester.",
+      "message": {
+        "id": "44444444-4444-4444-4444-444444444444",
+        "timestamp": "2026-04-03T00:03:00+00:00",
+        "sender": "PM",
+        "recipient": "Engineering",
+        "task_type": "FEATURE_RESPONSE",
+        "context": {
+          "project_id": "PROJECT-001",
+          "task_id": "TASK-ENG-022"
+        },
+        "payload": {
+          "features": {
+            "must": [
+              {
+                "name": "Guided Onboarding",
+                "impact": "high"
+              }
+            ],
+            "should": [
+              {
+                "name": "In-app Checklists",
+                "impact": "medium"
+              }
+            ],
+            "could": [
+              {
+                "name": "Theme Personalization",
+                "impact": "low"
+              }
+            ],
+            "wont": []
+          }
+        },
+        "status": "pending",
+        "error": ""
+      }
+    },
+    {
+      "name": "Marketing_budget_ok_campaign",
+      "description": "Marketing launches campaign directly when budget <= 10000.",
+      "message": {
+        "id": "55555555-5555-5555-5555-555555555555",
+        "timestamp": "2026-04-03T00:04:00+00:00",
+        "sender": "Marketing",
+        "recipient": "Sales",
+        "task_type": "CAMPAIGN_LAUNCHED",
+        "context": {
+          "project_id": "PROJECT-001",
+          "task_id": "TASK-101"
+        },
+        "payload": {
+          "product_name": "AI-Enterprise-Suite",
+          "channel_mix": [
+            "social",
+            "email",
+            "ads"
+          ],
+          "budget": 8000,
+          "expected_leads": 150,
+          "persona": "SMB Operations Manager",
+          "content_assets": [
+            "launch_email_v1",
+            "linkedin_post_v2",
+            "ad_creative_A"
+          ],
+          "ab_test": {
+            "variant_a": "Save 8 hours/week with AI workflows",
+            "variant_b": "Cut ops costs by 15% this quarter",
+            "winner": "variant_a"
+          },
+          "metrics_targets": {
+            "cac_target": 120,
+            "ltv_target": 2400,
+            "roi_target": 2.3
+          },
+          "lead_list_forwarded_to_sales": true
+        },
+        "status": "done",
+        "error": ""
+      }
+    },
+    {
+      "name": "Marketing_budget_approval_request_over_10k",
+      "description": "Marketing asks CEO for approval when campaign budget exceeds 10000 (sample payload only; CEO is not part of current runtime).",
+      "message": {
+        "id": "66666666-6666-6666-6666-666666666666",
+        "timestamp": "2026-04-03T00:05:00+00:00",
+        "sender": "Marketing",
+        "recipient": "CEO",
+        "task_type": "BUDGET_APPROVAL",
+        "context": {
+          "project_id": "PROJECT-001",
+          "task_id": "TASK-MKT-078"
+        },
+        "payload": {
+          "product_name": "AI-Enterprise-Suite",
+          "initiative": "Cross-channel Q2 growth campaign",
+          "budget": 15000,
+          "expected_leads": 300,
+          "expected_revenue": 120000,
+          "roi_estimate": 3.1,
+          "justification": "High-intent retargeting + broader brand reach needed for quarterly goal."
+        },
+        "status": "pending",
+        "error": ""
+      }
+    },
+    {
+      "name": "Marketing_passes_leads_to_sales",
+      "description": "Marketing sends qualified leads to Sales after campaign run.",
+      "message": {
+        "id": "77777777-7777-7777-7777-777777777777",
+        "timestamp": "2026-04-03T00:06:00+00:00",
+        "sender": "Marketing",
+        "recipient": "Sales",
+        "task_type": "QUALIFIED_LEADS_READY",
+        "context": {
+          "campaign_id": "CMP-2026-Q2-01",
+          "task_id": "TASK-SALES-014"
+        },
+        "payload": {
+          "lead_count": 42,
+          "lead_quality_score": 0.81,
+          "top_accounts": [
+            "Northwind Logistics",
+            "Acme Retail Ops"
+          ],
+          "notes": "Leads match SMB operations persona and requested demos."
+        },
+        "status": "done",
+        "error": ""
+      }
+    },
+    {
+      "name": "Marketing_campaign_metrics_report",
+      "description": "Marketing shares CAC/LTV/ROI performance summary.",
+      "message": {
+        "id": "88888888-8888-8888-8888-888888888888",
+        "timestamp": "2026-04-03T00:07:00+00:00",
+        "sender": "Marketing",
+        "recipient": "PM",
+        "task_type": "CAMPAIGN_METRICS",
+        "context": {
+          "campaign_id": "CMP-2026-Q2-01",
+          "project_id": "PROJECT-001"
+        },
+        "payload": {
+          "cac": 110,
+          "ltv": 2600,
+          "roi": 2.9,
+          "conversion_rate": 0.083,
+          "best_channel": "email",
+          "recommendation": "Increase email budget, keep social for awareness."
+        },
+        "status": "done",
+        "error": ""
+      }
+    },
+    {
+      "name": "Error_example_invalid_payload",
+      "description": "Example error envelope if any agent receives malformed payload.",
+      "message": {
+        "id": "99999999-9999-9999-9999-999999999999",
+        "timestamp": "2026-04-03T00:08:00+00:00",
+        "sender": "PM",
+        "recipient": "Marketing",
+        "task_type": "LAUNCH_CAMPAIGN",
+        "context": {
+          "project_id": "PROJECT-001"
+        },
+        "payload": {},
+        "status": "error",
+        "error": "payload.features missing; cannot create campaign"
+      }
+    }
+  ]
+}
