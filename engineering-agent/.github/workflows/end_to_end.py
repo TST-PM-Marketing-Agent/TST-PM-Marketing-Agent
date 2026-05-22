@@ -19,9 +19,10 @@ from pymongo import MongoClient
 # support — switch the model string below if you want to try it. llama3 (base) cannot use tools.
 # Local LLM (Ollama) — override with OLLAMA_MODEL env var to switch models without editing code.
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "ollama/llama3.1:latest")
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", os.environ.get("OLLAMA_HOST", "http://localhost:11434"))
 llm = LLM(
     model=OLLAMA_MODEL,
-    base_url="http://localhost:11434"
+    base_url=OLLAMA_BASE_URL
     )
 
 # GitHub repo for generated output — set GITHUB_REPO_URL to a remote URL to enable push.

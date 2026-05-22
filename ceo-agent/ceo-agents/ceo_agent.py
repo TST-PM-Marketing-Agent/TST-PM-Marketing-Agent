@@ -38,8 +38,10 @@ class CeoAgent(ThreadSafeAgentMixin):
         self.enforce_local_audio_only = True
         self.disallow_external_audio_storage = True
         # Ollama API endpoints for Mistral.
-        self.ollama_chat_url = "http://localhost:11434/api/chat"
-        self.ollama_generate_url = "http://localhost:11434/api/generate"
+        import os
+        ollama_host = os.environ.get("OLLAMA_BASE_URL", os.environ.get("OLLAMA_HOST", "http://localhost:11434")).rstrip("/")
+        self.ollama_chat_url = f"{ollama_host}/api/chat"
+        self.ollama_generate_url = f"{ollama_host}/api/generate"
         self.model_name = "mistral"
         self.chat_history: List[Dict[str, str]] = []
         self.metrics: Dict[str, Any] = {
