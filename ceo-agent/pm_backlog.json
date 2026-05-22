@@ -1,29 +1,29 @@
 {
   "must": [
     {
-      "name": "Real-time Data Monitoring",
+      "name": "Real-time Vehicle Monitoring",
       "impact": "high"
     },
     {
-      "name": "Solar Yield Tracking",
+      "name": "Robotaxi GPS Routing & Dispatch",
       "impact": "high"
     },
     {
-      "name": "Powerwall Charge Status",
+      "name": "Fleet Charge and Battery Telemetry",
       "impact": "high"
     }
   ],
   "should": [
     {
-      "name": "Grid Export Monitoring",
+      "name": "Dynamic Surge Pricing Calculator",
       "impact": "medium"
     },
     {
-      "name": "User-friendly Dashboard Interface",
+      "name": "User-friendly Booking Dashboard Interface",
       "impact": "medium"
     },
     {
-      "name": "End-to-end Solar Flow Visualization",
+      "name": "End-to-end Robotaxi Flow Visualization",
       "impact": "medium"
     }
   ],

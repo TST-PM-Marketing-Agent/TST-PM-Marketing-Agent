@@ -1,6 +1,6 @@
-# ⚡ Tesla Energy Smart Home: Multi-Agent System Dashboard
+# 🚕 Tesla Robotaxi Ride-Sharing: Multi-Agent System Dashboard
 
-Welcome to the **Tesla Energy Smart Home Multi-Agent System Demo**. This is a premium, hierarchy-aware multi-agent simulation that integrates strategic planning, product backlog management, advertising campaigns, and software synthesis under a single unified dashboard interface.
+Welcome to the **Tesla Robotaxi Ride-Sharing Multi-Agent System Demo**. This is a premium, hierarchy-aware multi-agent simulation that integrates strategic planning, product backlog management, advertising campaigns, and software synthesis under a single unified dashboard interface.
 
 ---
 

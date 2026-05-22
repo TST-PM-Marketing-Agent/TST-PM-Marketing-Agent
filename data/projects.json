@@ -130,7 +130,7 @@
     },
     "description": "",
     "created_at": "2026-05-22T05:09:37.723425+00:00",
-    "updated_at": "2026-05-22T05:14:28.292493+00:00",
+    "updated_at": "2026-05-22T05:35:07.440848+00:00",
     "status": "active",
     "requests": [
       {
@@ -189,6 +189,36 @@
           },
           {
             "name": "End-to-end Solar Flow Visualization",
+            "impact": "medium"
+          }
+        ]
+      },
+      {
+        "type": "roadmap",
+        "message_id": "msg-508bc96a",
+        "features": [
+          {
+            "name": "Real-Time Data Monitoring",
+            "impact": "high"
+          },
+          {
+            "name": "Solar Yield Tracker",
+            "impact": "high"
+          },
+          {
+            "name": "Grid Export Monitoring",
+            "impact": "medium"
+          },
+          {
+            "name": "Powerwall Charge Tracker",
+            "impact": "high"
+          },
+          {
+            "name": "User-Friendly Interface Design",
+            "impact": "medium"
+          },
+          {
+            "name": "Alerts and Notifications System",
             "impact": "medium"
           }
         ]
