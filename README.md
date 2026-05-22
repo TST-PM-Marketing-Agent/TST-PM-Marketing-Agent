@@ -29,6 +29,45 @@ docker compose down
 
 ---
 
+## 🤖 Running with Production Ollama & Mistral (Model Calls)
+
+If you want to experience the system using the actual agent brains via local LLMs rather than hardcoded mock simulations, follow these steps to set up Ollama and the Mistral/Llama models.
+
+> [!IMPORTANT]
+> Running **Live Production Agents** requires Ollama running on your host machine with the appropriate models pulled. Without this, the live agents will not be able to process strategic decisions, priorities, or code generation.
+
+### 1. Install & Start Ollama
+* Download and install [Ollama](https://ollama.com/) for your operating system.
+* Launch the Ollama application or start the server (typically runs on `http://localhost:11434`).
+
+### 2. Pull the Required Models
+Open your terminal and pull the models used by the agents:
+```bash
+# Pull Mistral (used by CEO, PM, Marketing, and HR agents)
+ollama pull mistral
+
+# Pull Llama 3.1 (used by default for the Engineering agent's code generation)
+ollama pull llama3.1
+```
+
+> [!TIP]
+> If you want to use **Mistral** for the Engineering agent as well (to keep memory/resource usage lower), you can override the engineering model using an environment variable before launching:
+> ```bash
+> export OLLAMA_MODEL="mistral"
+> ```
+
+### 3. Connection Configuration
+* **Docker Mode:** The docker container is configured to automatically communicate with Ollama on your host machine via the URL `http://host.docker.internal:11434` (pre-configured in `docker-compose.yml`). No extra setup is required!
+* **Local Python Mode:** By default, the agents will search for Ollama at `http://localhost:11434`. Make sure you have installed the python package with `pip3 install ollama`.
+
+### 4. Triggering Live Agents in the UI
+Once your models are pulled and Ollama is running:
+1. Open the dashboard at **[http://localhost:8765/](http://localhost:8765/)**.
+2. Click the shiny **"Run Live Production Agents"** button in the header.
+3. Watch the logs stream in as real agents execute the reasoning loops, prioritize backlog features, plan campaigns, and synthesize code using your local Ollama models!
+
+---
+
 ## 💻 Manual Running (Local Python)
 
 If you prefer to run the system directly on your local Python environment:
@@ -38,7 +77,7 @@ If you prefer to run the system directly on your local Python environment:
 
 ### 1. Install Dependencies
 ```bash
-pip3 install fastapi uvicorn pymongo requests eval_type_backport pydantic
+pip3 install fastapi uvicorn pymongo requests eval_type_backport pydantic ollama
 ```
 
 ### 2. Launch the Router Server

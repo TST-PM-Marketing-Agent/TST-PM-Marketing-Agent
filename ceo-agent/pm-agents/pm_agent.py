@@ -110,6 +110,7 @@ class PMAgent:
         )
         log_inter_agent_message(self.logger, report_msg, direction="SENDING")
         submit(report_msg)
+        return prioritized
 
     def handle_feature_request(self, msg):
         self.logger.info(f"PMAgent received feature request: {msg['id']}")

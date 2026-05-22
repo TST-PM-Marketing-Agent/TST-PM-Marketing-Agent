@@ -124,3 +124,4 @@ class MarketingAgent:
                 features=features,
             )
             self.logger.info(f"MarketingAgent image prompt: {image_prompt.get('prompt', '')[:80]}")
+            return campaign

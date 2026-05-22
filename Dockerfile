@@ -16,7 +16,8 @@ RUN pip install --no-cache-dir \
     "pymongo>=4.5" \
     "requests>=2.32" \
     "eval_type_backport>=0.2.0" \
-    "pydantic>=2.0"
+    "pydantic>=2.0" \
+    "ollama>=0.2.0"
 
 # Copy all multi-agent system directories into the container
 COPY ui-team /app/ui-team
