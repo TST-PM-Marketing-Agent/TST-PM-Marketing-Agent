@@ -34,3 +34,4 @@ def _persist_message(msg):
     with open(_MESSAGE_LOG, "w") as f:
         json.dump(existing, f, indent=2)
     storage.save_message(msg)
+

@@ -2,7 +2,7 @@ import logging
 import os
 from message_bus import get_messages_for, send_message
 from message_schema import Message
-from marketing_tools import plan_campaign, save_campaign
+from marketing_tools import plan_campaign, save_campaign, generate_email, generate_image_prompt
 from storage import storage
 
 budget_approval_threshold = 10000
@@ -95,3 +95,16 @@ class MarketingAgent:
                 }
             ))
             logging.info("MarketingAgent: CAMPAIGN_LAUNCHED sent to Sales")
+            email = generate_email(
+                product=product,
+                tagline=campaign.get("tagline", ""),
+                features=features,
+            )
+            logging.info(f"MarketingAgent email subject: {email.get('subject')}")
+
+            image_prompt = generate_image_prompt(
+                product=product,
+                tagline=campaign.get("tagline", ""),
+                features=features,
+            )
+            logging.info(f"MarketingAgent image prompt: {image_prompt.get('prompt', '')[:80]}")

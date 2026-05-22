@@ -6,13 +6,12 @@ from typing import Any, Dict, List, Optional
 
 from message_schema import Message
 from pymongo import MongoClient, DESCENDING
-from pymongo.database import Database
-
-
+from pymongo.database import Database 
+ 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
-
-
+ 
+ 
 class Storage:
     def __init__(self, mongo_uri: Optional[str] = None, db_name: Optional[str] = None) -> None:
         uri = mongo_uri or os.getenv("MONGO_URI", "mongodb://localhost:27017")
@@ -44,7 +43,7 @@ class Storage:
         now = _utc_now()
         resolved_id = project_id or str(uuid.uuid4())
         resolved_description = description or metadata.get("description", "")
-
+ 
         existing = self.db["projects"].find_one({"_id": resolved_id})
         if existing:
             self.db["projects"].update_one(
@@ -70,7 +69,7 @@ class Storage:
                 "updated_at": now,
             })
         return self.get_project(resolved_id) or {}
-
+ 
     def get_project(self, project_id: str) -> Optional[Dict[str, Any]]:
         doc = self.db["projects"].find_one({"_id": project_id})
         if not doc:
@@ -85,7 +84,7 @@ class Storage:
             "created_at": doc["created_at"],
             "updated_at": doc["updated_at"],
         }
-
+ 
     def find_active_project_by_name(self, name: str) -> Optional[Dict[str, Any]]:
         doc = self.db["projects"].find_one(
             {"name": name, "status": "active"},
@@ -94,11 +93,11 @@ class Storage:
         if not doc:
             return None
         return self.get_project(doc["_id"])
-
+ 
     # ------------------------------------------------------------------
     # Project events
     # ------------------------------------------------------------------
-
+ 
     def add_project_event(
         self,
         *,
@@ -123,17 +122,17 @@ class Storage:
                 {"_id": project_id},
                 {"$set": {"updated_at": now}},
             )
-
+ 
     # ------------------------------------------------------------------
     # Messages
     # ------------------------------------------------------------------
-
+ 
     def save_message(self, msg: Dict[str, Any]) -> None:
         Message.validate_envelope(msg)
         context = msg.get("context", {}) or {}
         project_id = context.get("project_id")
         now = _utc_now()
-
+ 
         self.db["messages"].replace_one(
             {"_id": msg.get("id")},
             {
@@ -155,11 +154,11 @@ class Storage:
                 {"_id": project_id},
                 {"$set": {"updated_at": now}},
             )
-
+ 
     # ------------------------------------------------------------------
     # Backlog
     # ------------------------------------------------------------------
-
+ 
     def save_backlog(
         self,
         project_id: Optional[str],
@@ -171,10 +170,10 @@ class Storage:
             os.makedirs(backlog_dir, exist_ok=True)
         with open(self.backlog_path, "w") as f:
             json.dump(prioritized, f, indent=2)
-
+ 
         if not project_id:
             return
-
+ 
         self.db["backlog_entries"].delete_many({"project_id": project_id})
         created_at = _utc_now()
         docs = []
@@ -190,16 +189,16 @@ class Storage:
                 })
         if docs:
             self.db["backlog_entries"].insert_many(docs)
-
+ 
         self.db["projects"].update_one(
             {"_id": project_id},
             {"$set": {"updated_at": _utc_now()}},
         )
-
+ 
     # ------------------------------------------------------------------
     # Campaigns
     # ------------------------------------------------------------------
-
+ 
     def save_campaign(self, campaign: Dict[str, Any]) -> None:
         project_id = campaign.get("project_id")
         now = _utc_now()
@@ -213,7 +212,6 @@ class Storage:
             self.db["projects"].update_one(
                 {"_id": project_id},
                 {"$set": {"updated_at": now}},
-            )
-
-
+            ) 
+ 
 storage = Storage()
